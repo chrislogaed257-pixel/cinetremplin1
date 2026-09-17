@@ -77,6 +77,78 @@ export type Database = {
           },
         ]
       }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_reads: {
+        Row: {
+          conversation_id: string
+          id: string
+          last_read_at: string
+          profile_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          last_read_at?: string
+          profile_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          last_read_at?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_reads_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_reads_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -950,6 +1022,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          link: string | null
           report_id: string
         }
         Insert: {
@@ -957,6 +1030,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          link?: string | null
           report_id: string
         }
         Update: {
@@ -964,6 +1038,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          link?: string | null
           report_id?: string
         }
         Relationships: [
@@ -1263,6 +1338,10 @@ export type Database = {
       }
       is_leave_validator: {
         Args: { _requester: string; _user_id: string }
+        Returns: boolean
+      }
+      is_participant: {
+        Args: { _conv: string; _user_id: string }
         Returns: boolean
       }
       is_supervisor: { Args: { _user_id: string }; Returns: boolean }
