@@ -46,6 +46,11 @@ type Application = {
   status: string;
   comment: string;
   created_at: string;
+  province?: string;
+  neighborhood?: string;
+  spoken_language?: string;
+  availability?: string;
+  cinema_experience?: boolean | null;
 };
 
 function CastingPage() {
