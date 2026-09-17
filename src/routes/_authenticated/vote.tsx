@@ -25,6 +25,7 @@ type Session = {
   created_at: string;
   access_login: string;
   access_code: string;
+  public_token?: string | null;
   opened_at: string | null;
   closed_at: string | null;
   proclamation: string;
