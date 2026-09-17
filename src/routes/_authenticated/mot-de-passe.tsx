@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import {
+  issueTemporaryPassword,
+  requesterDetails,
+} from "@/lib/password-help.functions";
 
 export const Route = createFileRoute("/_authenticated/mot-de-passe")({
   component: PasswordHelpPage,
@@ -108,34 +112,91 @@ function PasswordHelpPage() {
     (r) => allowed || r.requester_id === org.myId,
   );
 
+  const details = useQuery({
+    queryKey: ["password_request_details", mine.map((r) => r.id).join(",")],
+    enabled: allowed && mine.length > 0,
+    queryFn: () => requesterDetails({ data: { requestIds: mine.map((r) => r.id) } }),
+  });
+
+  const issue = useMutation({
+    mutationFn: (requestId: string) => issueTemporaryPassword({ data: { requestId } }),
+    onSuccess: (res, requestId) => {
+      const info = (details.data ?? []).find((d) => d.requestId === requestId);
+      setDrafts((p) => ({
+        ...p,
+        [requestId]:
+          `Bonjour ${info?.fullName ?? ""},\n\n` +
+          `Voici vos accès : identifiant ${res.email}, mot de passe provisoire ${res.password}.\n` +
+          `Merci de le changer dès votre prochaine connexion.`,
+      }));
+      toast.success("Mot de passe provisoire créé");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   if (!allowed && mine.length === 0) {
     return (
-      <AppLayout title="🔑 Mot de passe oublié">
+      <AppLayout title="Mot de passe oublié">
         <p className="text-sm text-muted-foreground">Aucun message.</p>
       </AppLayout>
     );
   }
 
   return (
-    <AppLayout title="🔑 Mot de passe oublié">
+    <AppLayout title="Mot de passe oublié">
       <div className="space-y-3">
         {mine.length === 0 && (
           <p className="text-sm text-muted-foreground">Aucune demande pour le moment.</p>
         )}
         {mine.map((r) => {
           const thread = (messages.data ?? []).filter((m) => m.request_id === r.id);
+          const info = (details.data ?? []).find((d) => d.requestId === r.id);
           return (
             <Card key={r.id}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm">
-                  {r.requester_id ? org.profileName(r.requester_id) : r.requester_email} —{" "}
+                  {info?.fullName ?? (r.requester_id ? org.profileName(r.requester_id) : r.requester_email)}{" "}
                   <span className="text-xs font-normal text-muted-foreground">
-                    {r.target_position} · {new Date(r.created_at).toLocaleString("fr-FR")} ·{" "}
+                    : {r.target_position} : {new Date(r.created_at).toLocaleString("fr-FR")} :{" "}
                     {r.status}
                   </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
+                {allowed && info && (
+                  <div className="rounded border border-border bg-secondary/40 p-3 text-xs">
+                    <p>
+                      <span className="text-muted-foreground">Nom complet : </span>
+                      {info.fullName}
+                    </p>
+                    <p>
+                      <span className="text-muted-foreground">Poste : </span>
+                      {info.positions.length > 0 ? info.positions.join(", ") : "Non renseigné"}
+                    </p>
+                    <p>
+                      <span className="text-muted-foreground">Identifiant de connexion : </span>
+                      {info.email}
+                    </p>
+                    <p>
+                      <span className="text-muted-foreground">Compte : </span>
+                      {info.active ? "actif" : "désactivé"}
+                      {info.mustChangePassword ? " : changement de mot de passe demandé" : ""}
+                    </p>
+                    <p className="mt-1 text-muted-foreground">
+                      Le mot de passe est chiffré et illisible : générez un mot de passe provisoire
+                      à transmettre.
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-2"
+                      disabled={issue.isPending}
+                      onClick={() => issue.mutate(r.id)}
+                    >
+                      Générer un mot de passe provisoire
+                    </Button>
+                  </div>
+                )}
                 {thread.map((m) => (
                   <div
                     key={m.id}
