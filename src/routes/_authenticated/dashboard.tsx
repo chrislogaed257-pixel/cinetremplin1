@@ -96,6 +96,45 @@ function Dashboard() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Description de poste : rédigée par le membre, reprise dans l'organigramme.
+  const [roleDraft, setRoleDraft] = useState<string | null>(null);
+  const roleText = roleDraft ?? me?.profile?.role_description ?? "";
+  const saveRole = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ role_description: roleText })
+        .eq("id", me!.userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["me"] });
+      qc.invalidateQueries({ queryKey: ["profiles"] });
+      toast.success("Description de poste enregistrée");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const festivals = useQuery({
+    queryKey: ["festivals", "dashboard"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("festivals")
+        .select("id, name, kind, deadline, url, notes")
+        .order("deadline", { ascending: true, nullsFirst: false });
+      if (error) throw error;
+      return (data ?? []) as {
+        id: string;
+        name: string;
+        kind: string;
+        deadline: string | null;
+        url: string;
+        notes: string;
+      }[];
+    },
+  });
+
+
   const myTasks = (tasks.data ?? []).filter((t) => t.owner_id === me?.userId && t.status !== "done");
   const receivedTasks = (tasks.data ?? []).filter(
     (t) => t.owner_id === me?.userId && t.assigned_by && t.assigned_by !== me?.userId && t.status !== "done",
