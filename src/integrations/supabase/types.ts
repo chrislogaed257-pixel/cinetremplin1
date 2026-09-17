@@ -1288,6 +1288,68 @@ export type Database = {
           },
         ]
       }
+      project_phase_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          from_phase_id: string | null
+          from_state: string
+          id: string
+          project_id: string
+          to_phase_id: string | null
+          to_state: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          from_phase_id?: string | null
+          from_state?: string
+          id?: string
+          project_id: string
+          to_phase_id?: string | null
+          to_state?: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          from_phase_id?: string | null
+          from_state?: string
+          id?: string
+          project_id?: string
+          to_phase_id?: string | null
+          to_state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_phase_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_phase_history_from_phase_id_fkey"
+            columns: ["from_phase_id"]
+            isOneToOne: false
+            referencedRelation: "project_phases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_phase_history_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_phase_history_to_phase_id_fkey"
+            columns: ["to_phase_id"]
+            isOneToOne: false
+            referencedRelation: "project_phases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_phases: {
         Row: {
           active: boolean
@@ -1346,6 +1408,8 @@ export type Database = {
           id: string
           idea_id: string | null
           logline: string
+          phase_id: string | null
+          state: string
           status: string
           title: string
           updated_at: string
@@ -1356,6 +1420,8 @@ export type Database = {
           id?: string
           idea_id?: string | null
           logline?: string
+          phase_id?: string | null
+          state?: string
           status?: string
           title: string
           updated_at?: string
@@ -1366,6 +1432,8 @@ export type Database = {
           id?: string
           idea_id?: string | null
           logline?: string
+          phase_id?: string | null
+          state?: string
           status?: string
           title?: string
           updated_at?: string
@@ -1376,6 +1444,13 @@ export type Database = {
             columns: ["idea_id"]
             isOneToOne: false
             referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_phase_id_fkey"
+            columns: ["phase_id"]
+            isOneToOne: false
+            referencedRelation: "project_phases"
             referencedColumns: ["id"]
           },
         ]
@@ -1767,6 +1842,7 @@ export type Database = {
         Args: { _conv: string; _user_id: string }
         Returns: boolean
       }
+      can_advance_project: { Args: { _user_id: string }; Returns: boolean }
       can_manage_accounting: { Args: { _user_id: string }; Returns: boolean }
       can_see_ideas: { Args: { _user_id: string }; Returns: boolean }
       can_view_user: {
