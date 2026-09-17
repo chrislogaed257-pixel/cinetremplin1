@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       contributions: {
         Row: {
           amount: number
@@ -411,6 +429,30 @@ export type Database = {
           },
         ]
       }
+      message_templates: {
+        Row: {
+          body: string
+          key: string
+          label: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          key: string
+          label: string
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          key?: string
+          label?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           author_id: string
@@ -485,6 +527,86 @@ export type Database = {
           {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      password_messages: {
+        Row: {
+          author_id: string | null
+          content: string
+          created_at: string
+          from_member: boolean
+          id: string
+          request_id: string
+        }
+        Insert: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          from_member?: boolean
+          id?: string
+          request_id: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          from_member?: boolean
+          id?: string
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "password_messages_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "password_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "password_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      password_requests: {
+        Row: {
+          created_at: string
+          id: string
+          requester_email: string
+          requester_id: string | null
+          status: string
+          target_position: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          requester_email: string
+          requester_id?: string | null
+          status?: string
+          target_position: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          requester_email?: string
+          requester_id?: string | null
+          status?: string
+          target_position?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "password_requests_requester_id_fkey"
+            columns: ["requester_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -642,6 +764,7 @@ export type Database = {
           likes: string
           manager_id: string | null
           position: string
+          role_description: string
           updated_at: string
         }
         Insert: {
@@ -654,6 +777,7 @@ export type Database = {
           likes?: string
           manager_id?: string | null
           position?: string
+          role_description?: string
           updated_at?: string
         }
         Update: {
@@ -666,6 +790,7 @@ export type Database = {
           likes?: string
           manager_id?: string | null
           position?: string
+          role_description?: string
           updated_at?: string
         }
         Relationships: [
@@ -674,6 +799,58 @@ export type Database = {
             columns: ["manager_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_members: {
+        Row: {
+          added_by: string | null
+          comment: string
+          created_at: string
+          id: string
+          profile_id: string
+          project_id: string
+          status: string
+        }
+        Insert: {
+          added_by?: string | null
+          comment?: string
+          created_at?: string
+          id?: string
+          profile_id: string
+          project_id: string
+          status?: string
+        }
+        Update: {
+          added_by?: string | null
+          comment?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
