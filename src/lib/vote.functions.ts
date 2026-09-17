@@ -32,6 +32,36 @@ export const voteLogin = createServerFn({ method: "POST" })
     return { ok: true as const, session, projects: (projects ?? []) as VoteProject[] };
   });
 
+const openInput = z.object({ token: z.string().min(8) });
+
+/**
+ * Accès direct et immédiat : le lien partagé contient le jeton public de la session,
+ * aucun identifiant ni validation d'accès n'est demandé.
+ */
+export const voteOpen = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => openInput.parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const token = data.token.trim();
+    const cols =
+      "id, title, description, status, max_votes, require_distinct, live_results, individual_codes, opened_at, closed_at, proclamation";
+    let session = (
+      await supabaseAdmin.from("vote_sessions").select(cols).eq("public_token", token).maybeSingle()
+    ).data;
+    if (!session)
+      session = (
+        await supabaseAdmin.from("vote_sessions").select(cols).eq("mentor_token", token).maybeSingle()
+      ).data;
+    if (!session) return { ok: false as const, error: "Ce lien de vote n'est pas valide." };
+    if (!session.opened_at) return { ok: false as const, error: "Le vote n'est pas encore ouvert." };
+    const { data: projects } = await supabaseAdmin
+      .from("vote_projects")
+      .select("code, title, description")
+      .eq("session_id", session.id)
+      .order("sort_order");
+    return { ok: true as const, session, projects: (projects ?? []) as VoteProject[] };
+  });
+
 const stateInput = z.object({ sessionId: z.string().uuid(), token: z.string().min(8) });
 
 async function readState(sessionId: string, token: string) {
