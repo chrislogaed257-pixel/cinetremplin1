@@ -74,6 +74,20 @@
 - [ ] Phase F — rubrique Vote indépendante (connexion dédiée, anonymat à deux tables)
 - [ ] Phase G — vérifications de cohérence
 
+## Mission d'amélioration globale
+- [ ] Garantir l'accès complet du Producteur général, hors sessions de vote ouvertes
+- [ ] Enrichir les demandes de mot de passe oublié
+- [ ] Compléter le cycle Tâches vers Rapports, validation, délais et notifications
+- [ ] Améliorer navigation, ordre du menu, retour, position conservée et connexion
+- [ ] Rendre les notifications actionnables et vérifier tous leurs destinataires
+- [ ] Ajouter congés dans l'organigramme, non-lus en messagerie et participants aux discussions
+- [ ] Compléter Vote, accès mentors, proclamation, PDF, archives et analyse d'anomalies
+- [ ] Compléter Casting, candidatures, réponses, acteurs approuvés et discussion dédiée
+- [ ] Créer les archives du club et nettoyer les PDF imprimables
+- [ ] Relier descriptions de poste, tableau de bord et organigramme
+- [ ] Étendre la langue globale et harmoniser toute l'interface sans emojis
+- [ ] Tester chaque rubrique modifiée et documenter les corrections
+
 ## Phase D — Journal d'activité & relances (fait)
 - [x] Rubrique « Journal d'activité » réservée au Producteur général : qui, quoi, quand, filtrable et imprimable en PDF
 - [x] Aucun contenu de vote ni identité de votant enregistrés (seules ouverture/clôture des sessions)
