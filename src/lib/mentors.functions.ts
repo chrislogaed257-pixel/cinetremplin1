@@ -42,7 +42,7 @@ export const acceptMentorInvite = createServerFn({ method: "POST" })
     });
     if (error || !created.user) throw new Error(error?.message ?? "Création impossible");
     const id = created.user.id;
-    const name = invite.full_name || email;
+    const name = invite?.full_name || fullName || email;
 
     const { error: pErr } = await db.from("profiles").insert({
       id,
@@ -55,8 +55,9 @@ export const acceptMentorInvite = createServerFn({ method: "POST" })
     await db.from("user_roles").insert({ user_id: id, role: "mentor" });
     await db
       .from("conversations")
-      .upsert({ kind: "mentor", title: `Mentor — ${name}`, ref_id: id }, { onConflict: "kind,ref_id" });
-    await db.from("mentor_invites").update({ used_at: new Date().toISOString() }).eq("id", invite.id);
+      .upsert({ kind: "mentor", title: `Mentor : ${name}`, ref_id: id }, { onConflict: "kind,ref_id" });
+    if (invite)
+      await db.from("mentor_invites").update({ used_at: new Date().toISOString() }).eq("id", invite.id);
 
     return { ok: true };
   });
