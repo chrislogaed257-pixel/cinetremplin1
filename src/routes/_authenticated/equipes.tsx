@@ -93,6 +93,41 @@ function TeamsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const renameTeam = useMutation({
+    mutationFn: async ({ id, newName }: { id: string; newName: string }) => {
+      if (!newName.trim()) throw new Error("Le nom de l'équipe ne peut pas être vide.");
+      const { error } = await supabase.from("teams").update({ name: newName.trim() }).eq("id", id);
+      if (error) throw error;
+      await supabase
+        .from("conversations")
+        .update({ title: `Équipe ${newName.trim()}` })
+        .eq("kind", "team")
+        .eq("ref_id", id);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["teams"] });
+      qc.invalidateQueries({ queryKey: ["conversations"] });
+      toast.success("Nom de l'équipe modifié");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const deleteTeam = useMutation({
+    mutationFn: async (id: string) => {
+      const { error: mErr } = await supabase.from("team_members").delete().eq("team_id", id);
+      if (mErr) throw mErr;
+      const { error } = await supabase.from("teams").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setOpenTeam(null);
+      qc.invalidateQueries({ queryKey: ["teams"] });
+      qc.invalidateQueries({ queryKey: ["team_members"] });
+      toast.success("Équipe supprimée");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <AppLayout title="Équipes">
       <div className="grid gap-4 md:grid-cols-[320px_1fr]">
@@ -130,8 +165,20 @@ function TeamsPage() {
               <Card key={t.id}>
                 <CardContent className="space-y-3 p-4">
                   <div className="flex flex-wrap items-center gap-3">
-                    <div className="mr-auto">
-                      <p className="font-medium">{t.name}</p>
+                    <div className="mr-auto space-y-1">
+                      {isLeader ? (
+                        <Input
+                          className="w-64 font-medium"
+                          defaultValue={t.name}
+                          onBlur={(e) =>
+                            e.target.value.trim() &&
+                            e.target.value !== t.name &&
+                            renameTeam.mutate({ id: t.id, newName: e.target.value })
+                          }
+                        />
+                      ) : (
+                        <p className="font-medium">{t.name}</p>
+                      )}
                       <p className="text-xs text-muted-foreground">
                         Responsable : {org.profileName(t.leader_id)}
                       </p>
@@ -143,6 +190,18 @@ function TeamsPage() {
                     >
                       {openTeam === t.id ? "Fermer" : "Ouvrir"}
                     </Button>
+                    {isLeader && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          if (window.confirm(`Supprimer l'équipe ${t.name} ?`))
+                            deleteTeam.mutate(t.id);
+                        }}
+                      >
+                        Supprimer l'équipe
+                      </Button>
+                    )}
                   </div>
 
                   {openTeam === t.id && (

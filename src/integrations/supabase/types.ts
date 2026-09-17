@@ -114,6 +114,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           crew: string
+          extra: Json
           id: string
           location: string
           notes: string
@@ -127,6 +128,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           crew?: string
+          extra?: Json
           id?: string
           location?: string
           notes?: string
@@ -140,6 +142,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           crew?: string
+          extra?: Json
           id?: string
           location?: string
           notes?: string
@@ -175,6 +178,7 @@ export type Database = {
           comment: string
           created_at: string
           email: string
+          extra: Json
           full_name: string
           id: string
           link: string
@@ -197,6 +201,7 @@ export type Database = {
           comment?: string
           created_at?: string
           email: string
+          extra?: Json
           full_name: string
           id?: string
           link?: string
@@ -219,6 +224,7 @@ export type Database = {
           comment?: string
           created_at?: string
           email?: string
+          extra?: Json
           full_name?: string
           id?: string
           link?: string
@@ -347,6 +353,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           end_date: string | null
+          extra: Json
           id: string
           profile_id: string
           project_id: string | null
@@ -361,6 +368,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           end_date?: string | null
+          extra?: Json
           id?: string
           profile_id: string
           project_id?: string | null
@@ -375,6 +383,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           end_date?: string | null
+          extra?: Json
           id?: string
           profile_id?: string
           project_id?: string | null
@@ -700,6 +709,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      form_fields: {
+        Row: {
+          active: boolean
+          created_at: string
+          field_key: string
+          field_type: string
+          id: string
+          label: string
+          required: boolean
+          scope: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          field_key: string
+          field_type?: string
+          id?: string
+          label: string
+          required?: boolean
+          scope: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          field_key?: string
+          field_type?: string
+          id?: string
+          label?: string
+          required?: boolean
+          scope?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       funders: {
         Row: {

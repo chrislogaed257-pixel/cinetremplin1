@@ -96,6 +96,45 @@ function Dashboard() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Description de poste : rédigée par le membre, reprise dans l'organigramme.
+  const [roleDraft, setRoleDraft] = useState<string | null>(null);
+  const roleText = roleDraft ?? me?.profile?.role_description ?? "";
+  const saveRole = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ role_description: roleText })
+        .eq("id", me!.userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["me"] });
+      qc.invalidateQueries({ queryKey: ["profiles"] });
+      toast.success("Description de poste enregistrée");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const festivals = useQuery({
+    queryKey: ["festivals", "dashboard"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("festivals")
+        .select("id, name, kind, deadline, url, notes")
+        .order("deadline", { ascending: true, nullsFirst: false });
+      if (error) throw error;
+      return (data ?? []) as {
+        id: string;
+        name: string;
+        kind: string;
+        deadline: string | null;
+        url: string;
+        notes: string;
+      }[];
+    },
+  });
+
+
   const myTasks = (tasks.data ?? []).filter((t) => t.owner_id === me?.userId && t.status !== "done");
   const receivedTasks = (tasks.data ?? []).filter(
     (t) => t.owner_id === me?.userId && t.assigned_by && t.assigned_by !== me?.userId && t.status !== "done",
@@ -218,6 +257,78 @@ function Dashboard() {
             })}
           </CardContent>
         </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-sm">Description de mon poste</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <p className="text-xs text-muted-foreground">
+              Rédigez vous-même ce que vous faites dans le club : ce texte apparaît aussitôt sur
+              votre fiche dans l'organigramme.
+            </p>
+            <Textarea
+              rows={4}
+              placeholder="Exemple : je prépare les plans de tournage et je coordonne l'équipe image."
+              value={roleText}
+              onChange={(e) => setRoleDraft(e.target.value)}
+            />
+            <Button size="sm" disabled={saveRole.isPending} onClick={() => saveRole.mutate()}>
+              Enregistrer
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Festival en cours</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            {(festivals.data ?? []).length === 0 && (
+              <p className="text-muted-foreground">Aucun festival annoncé.</p>
+            )}
+            {(festivals.data ?? []).slice(0, 3).map((f) => {
+              const days = f.deadline
+                ? Math.ceil((new Date(f.deadline).getTime() - Date.now()) / 86400000)
+                : null;
+              return (
+                <div key={f.id} className="space-y-1 rounded border border-border p-3">
+                  <p className="font-medium">{f.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {f.kind === "residence"
+                      ? "Résidence"
+                      : f.kind === "appel"
+                        ? "Appel à projets"
+                        : "Festival"}
+                    {f.deadline
+                      ? ` : date limite ${new Date(f.deadline).toLocaleDateString("fr-FR")}`
+                      : ""}
+                    {days !== null
+                      ? days < 0
+                        ? " (dépassée)"
+                        : days === 0
+                          ? " (dernier jour)"
+                          : ` (${days} jour(s) restant(s))`
+                      : ""}
+                  </p>
+                  {f.notes && <p className="text-xs">{f.notes}</p>}
+                  {f.url && (
+                    <a
+                      href={f.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-primary underline"
+                    >
+                      Voir l'appel
+                    </a>
+                  )}
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+
 
         <Card className="md:col-span-3">
           <CardHeader>
