@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounting_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          detail: string
+          entity: string
+          entity_id: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          detail?: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          detail?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounting_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_settings: {
         Row: {
           key: string
@@ -31,6 +69,237 @@ export type Database = {
           value?: string
         }
         Relationships: []
+      }
+      call_sheets: {
+        Row: {
+          call_time: string
+          created_at: string
+          created_by: string | null
+          crew: string
+          id: string
+          location: string
+          notes: string
+          project_id: string | null
+          service_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          call_time?: string
+          created_at?: string
+          created_by?: string | null
+          crew?: string
+          id?: string
+          location?: string
+          notes?: string
+          project_id?: string | null
+          service_date: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          call_time?: string
+          created_at?: string
+          created_by?: string | null
+          crew?: string
+          id?: string
+          location?: string
+          notes?: string
+          project_id?: string | null
+          service_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_sheets_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_sheets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      casting_applications: {
+        Row: {
+          age: string
+          call_id: string
+          city: string
+          comment: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          link: string
+          note: string
+          phone: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          age?: string
+          call_id: string
+          city?: string
+          comment?: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          link?: string
+          note?: string
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          age?: string
+          call_id?: string
+          city?: string
+          comment?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          link?: string
+          note?: string
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_applications_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "casting_calls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      casting_calls: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          is_open: boolean
+          project_id: string | null
+          public_token: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          is_open?: boolean
+          project_id?: string | null
+          public_token?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          is_open?: boolean
+          project_id?: string | null
+          public_token?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_calls_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_calls_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contracts: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          end_date: string | null
+          id: string
+          profile_id: string
+          project_id: string | null
+          role_title: string
+          start_date: string | null
+          status: string
+          terms: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          id?: string
+          profile_id: string
+          project_id?: string | null
+          role_title?: string
+          start_date?: string | null
+          status?: string
+          terms?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          id?: string
+          profile_id?: string
+          project_id?: string | null
+          role_title?: string
+          start_date?: string | null
+          status?: string
+          terms?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contributions: {
         Row: {
@@ -281,6 +550,50 @@ export type Database = {
           },
         ]
       }
+      festivals: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deadline: string | null
+          id: string
+          kind: string
+          name: string
+          notes: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          id?: string
+          kind?: string
+          name: string
+          notes?: string
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          id?: string
+          kind?: string
+          name?: string
+          notes?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "festivals_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       funders: {
         Row: {
           contact_ref: string
@@ -470,6 +783,7 @@ export type Database = {
           start_date: string
           status: string
           updated_at: string
+          validator_id: string | null
         }
         Insert: {
           created_at?: string
@@ -480,6 +794,7 @@ export type Database = {
           start_date: string
           status?: string
           updated_at?: string
+          validator_id?: string | null
         }
         Update: {
           created_at?: string
@@ -490,11 +805,57 @@ export type Database = {
           start_date?: string
           status?: string
           updated_at?: string
+          validator_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "leave_requests_requester_id_fkey"
             columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leave_requests_validator_id_fkey"
+            columns: ["validator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentor_invites: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          email: string
+          full_name: string
+          id: string
+          used_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          email: string
+          full_name?: string
+          id?: string
+          used_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentor_invites_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -984,6 +1345,7 @@ export type Database = {
           description: string
           id: string
           idea_id: string | null
+          logline: string
           status: string
           title: string
           updated_at: string
@@ -993,6 +1355,7 @@ export type Database = {
           description?: string
           id?: string
           idea_id?: string | null
+          logline?: string
           status?: string
           title: string
           updated_at?: string
@@ -1002,6 +1365,7 @@ export type Database = {
           description?: string
           id?: string
           idea_id?: string | null
+          logline?: string
           status?: string
           title?: string
           updated_at?: string
@@ -1155,6 +1519,7 @@ export type Database = {
           id: string
           owner_id: string
           phase_id: string | null
+          project_id: string | null
           status: Database["public"]["Enums"]["task_status"]
           title: string
           updated_at: string
@@ -1169,6 +1534,7 @@ export type Database = {
           id?: string
           owner_id: string
           phase_id?: string | null
+          project_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title: string
           updated_at?: string
@@ -1183,6 +1549,7 @@ export type Database = {
           id?: string
           owner_id?: string
           phase_id?: string | null
+          project_id?: string | null
           status?: Database["public"]["Enums"]["task_status"]
           title?: string
           updated_at?: string
@@ -1207,6 +1574,13 @@ export type Database = {
             columns: ["phase_id"]
             isOneToOne: false
             referencedRelation: "project_phases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -1297,6 +1671,93 @@ export type Database = {
         }
         Relationships: []
       }
+      vote_ballots: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          session_id: string
+          voter_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          session_id: string
+          voter_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          session_id?: string
+          voter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_ballots_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vote_ballots_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "vote_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vote_ballots_voter_id_fkey"
+            columns: ["voter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vote_sessions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          max_votes: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          max_votes?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          max_votes?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_sessions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1345,6 +1806,13 @@ export type Database = {
         Returns: boolean
       }
       is_supervisor: { Args: { _user_id: string }; Returns: boolean }
+      vote_results: {
+        Args: { _session: string }
+        Returns: {
+          project_id: string
+          votes: number
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "member" | "mentor" | "funder"
