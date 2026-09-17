@@ -5,7 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { castVote, voteLogin, voteResults, voteState, type VoteProject } from "@/lib/vote.functions";
+import {
+  castVote,
+  voteLogin,
+  voteOpen,
+  voteResults,
+  voteState,
+  type VoteProject,
+} from "@/lib/vote.functions";
 
 export const Route = createFileRoute("/vote-acces")({
   component: VoteAccess,
@@ -71,6 +78,27 @@ function VoteAccess() {
     return () => clearInterval(i);
   }, [session]);
 
+  // Accès direct : le lien partagé (?t=jeton) ouvre le vote sans identifiant ni demande d'accès.
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("t");
+    if (!t) return;
+    void (async () => {
+      setBusy(true);
+      const res = await voteOpen({ data: { token: t } });
+      setBusy(false);
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
+      setSession(res.session as Session);
+      setProjects(res.projects);
+      const st = await voteState({ data: { sessionId: res.session.id, token: getToken() } });
+      setUsed(st.used);
+      setVoted(st.votedCodes);
+      void refreshResults(res.session.id);
+    })();
+  }, []);
+
   async function submitLogin(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -110,7 +138,7 @@ function VoteAccess() {
       <main className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <CardTitle className="text-base">🗳️ Vote — Club Ciné Tremplin</CardTitle>
+            <CardTitle className="text-base">Vote : Club Ciné Tremplin</CardTitle>
           </CardHeader>
           <CardContent>
             <form className="space-y-3" onSubmit={submitLogin}>
@@ -141,7 +169,7 @@ function VoteAccess() {
   return (
     <main className="mx-auto max-w-2xl p-4">
       <div className="sticky top-0 z-10 mb-4 rounded border border-border bg-background p-3">
-        <h1 className="text-base font-semibold text-primary">🗳️ {session.title}</h1>
+        <h1 className="text-base font-semibold text-primary">{session.title}</h1>
         <p className="text-sm">
           {closed ? "Vote clos" : `Voix restantes : ${remaining} / ${session.max_votes}`}
         </p>
@@ -175,6 +203,28 @@ function VoteAccess() {
             <p className="text-sm text-muted-foreground">Aucun projet soumis au vote.</p>
           )}
         </div>
+      )}
+
+      {!closed && remaining === 0 && (
+        <Card className="mt-4">
+          <CardContent className="space-y-3 p-4 text-sm">
+            <p className="font-medium">Merci pour votre participation.</p>
+            <p className="text-muted-foreground">
+              Vos voix sont enregistrées de façon anonyme. Les résultats seront annoncés lors de la
+              proclamation officielle.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSession(null);
+                setProjects([]);
+                window.location.href = "/";
+              }}
+            >
+              Quitter
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {(closed || session.live_results) && (

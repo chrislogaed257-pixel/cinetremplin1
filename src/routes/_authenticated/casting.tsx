@@ -46,6 +46,11 @@ type Application = {
   status: string;
   comment: string;
   created_at: string;
+  province?: string;
+  neighborhood?: string;
+  spoken_language?: string;
+  availability?: string;
+  cinema_experience?: boolean | null;
 };
 
 function CastingPage() {
@@ -213,7 +218,7 @@ function CastingPage() {
               <Card key={c.id}>
                 <CardHeader className="flex flex-row items-start gap-3">
                   <div className="min-w-0 flex-1">
-                    <CardTitle className="text-base">🎥 {c.title}</CardTitle>
+                    <CardTitle className="text-base">{c.title}</CardTitle>
                     {c.description && (
                       <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
                     )}
@@ -280,6 +285,15 @@ function ApplicationRow({
               ? "Retenu"
               : "Non retenu"}
         </span>
+      </div>
+      <div className="grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+        {app.province && <span>Province : {app.province}</span>}
+        {app.neighborhood && <span>Quartier : {app.neighborhood}</span>}
+        {app.spoken_language && <span>Langue parlée : {app.spoken_language}</span>}
+        {app.cinema_experience !== null && app.cinema_experience !== undefined && (
+          <span>Expérience en cinéma : {app.cinema_experience ? "Oui" : "Non"}</span>
+        )}
+        {app.availability && <span>Disponibilité : {app.availability}</span>}
       </div>
       {app.note && <p className="text-sm">{app.note}</p>}
       {app.link && (

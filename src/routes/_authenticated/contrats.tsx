@@ -17,6 +17,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import {
+  useFormFields,
+  ExtraFieldsInputs,
+  ExtraFieldsView,
+  type ExtraValues,
+} from "@/components/FormFields";
 
 export const Route = createFileRoute("/_authenticated/contrats")({
   component: ContractsPage,
@@ -33,6 +39,7 @@ type Contract = {
   amount: number;
   status: string;
   created_at: string;
+  extra?: unknown;
 };
 
 const NONE = "none";
@@ -50,6 +57,8 @@ function ContractsPage() {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [amount, setAmount] = useState("");
+  const [extra, setExtra] = useState<ExtraValues>({});
+  const { data: fields = [] } = useFormFields("contrat");
 
   const contracts = useQuery({
     queryKey: ["contracts"],
@@ -74,6 +83,7 @@ function ContractsPage() {
         start_date: start || null,
         end_date: end || null,
         amount: Number(amount || 0),
+        extra,
         status: "draft",
         created_by: org.myId,
       });
@@ -83,6 +93,7 @@ function ContractsPage() {
       setRoleTitle("");
       setTerms("");
       setAmount("");
+      setExtra({});
       qc.invalidateQueries({ queryKey: ["contracts"] });
       toast.success("Contrat créé");
     },
@@ -170,6 +181,12 @@ function ContractsPage() {
                   <Label htmlFor="te">Conditions</Label>
                   <Textarea id="te" rows={4} value={terms} onChange={(e) => setTerms(e.target.value)} />
                 </div>
+                <ExtraFieldsInputs
+                  fields={fields}
+                  values={extra}
+                  idPrefix="contrat"
+                  onChange={(k, v) => setExtra((prev) => ({ ...prev, [k]: v }))}
+                />
                 <Button type="submit" className="w-full" disabled={create.isPending}>
                   Créer le contrat
                 </Button>
@@ -196,7 +213,7 @@ function ContractsPage() {
                 <div className="flex flex-wrap items-start gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">
-                      📋 {org.profileName(c.profile_id)} — {c.role_title || "Fonction à préciser"}
+                      {org.profileName(c.profile_id)} : {c.role_title || "Fonction à préciser"}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {projectName(c.project_id)}
@@ -218,6 +235,7 @@ function ContractsPage() {
                   </span>
                 </div>
                 {c.terms && <p className="whitespace-pre-wrap text-sm">{c.terms}</p>}
+                <ExtraFieldsView fields={fields} values={c.extra} />
                 {canManage && (
                   <div className="flex gap-2 print:hidden">
                     <Button

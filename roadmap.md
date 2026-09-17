@@ -128,3 +128,9 @@
 - [x] Catégories de dépenses par phase (pré-production, tournage, post-production, communication & diffusion, administratif, autre)
 - [x] Durée estimée sur chaque tâche, espace liens & documents partagé
 - [x] Accès bailleur croisé (interrupteur), idées publiques notifiées aux producteurs et au scénariste, discussion par projet approuvé
+
+- [x] Vote en accès direct par lien (jeton public), message de remerciement + bouton Quitter
+- [x] Mentors externes en accès libre (nom complet, code facultatif)
+- [x] Formulaire de casting public complet + fiche candidat détaillée côté direction
+- [x] Cases personnalisables branchées (Contrats, Feuille de service, Casting) + onglet Cases des fiches
+- [x] Tests navigateur : rapports (saisie continue), congés, équipes, dashboard, vote, casting
