@@ -1185,6 +1185,44 @@ export type Database = {
           },
         ]
       }
+      profile_position_history: {
+        Row: {
+          created_at: string
+          ended_on: string | null
+          id: string
+          position_name: string
+          profile_id: string
+          rank_label: string
+          started_on: string
+        }
+        Insert: {
+          created_at?: string
+          ended_on?: string | null
+          id?: string
+          position_name: string
+          profile_id: string
+          rank_label?: string
+          started_on?: string
+        }
+        Update: {
+          created_at?: string
+          ended_on?: string | null
+          id?: string
+          position_name?: string
+          profile_id?: string
+          rank_label?: string
+          started_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_position_history_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_positions: {
         Row: {
           created_at: string
@@ -1234,6 +1272,7 @@ export type Database = {
           id: string
           likes: string
           manager_id: string | null
+          must_change_password: boolean
           position: string
           role_description: string
           updated_at: string
@@ -1247,6 +1286,7 @@ export type Database = {
           id: string
           likes?: string
           manager_id?: string | null
+          must_change_password?: boolean
           position?: string
           role_description?: string
           updated_at?: string
@@ -1260,6 +1300,7 @@ export type Database = {
           id?: string
           likes?: string
           manager_id?: string | null
+          must_change_password?: boolean
           position?: string
           role_description?: string
           updated_at?: string
@@ -2065,7 +2106,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "member" | "mentor" | "funder"
       report_status: "sent" | "read" | "validated"
-      task_status: "todo" | "doing" | "done"
+      task_status: "todo" | "doing" | "done" | "reassign"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2195,7 +2236,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "member", "mentor", "funder"],
       report_status: ["sent", "read", "validated"],
-      task_status: ["todo", "doing", "done"],
+      task_status: ["todo", "doing", "done", "reassign"],
     },
   },
 } as const
