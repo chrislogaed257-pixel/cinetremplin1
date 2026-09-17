@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import logo from "@/assets/logo.png.asset.json";
+import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/idees-soumission")({
@@ -67,7 +67,7 @@ function PublicIdeaForm() {
     <div className="min-h-screen bg-background px-4 py-10 text-foreground">
       <div className="mx-auto max-w-xl">
         <div className="mb-6 flex items-center gap-3">
-          <img src={logo.url} alt="Club Ciné Tremplin" className="h-12 w-12 object-contain" />
+          <img src={logo} alt="Club Ciné Tremplin" className="h-12 w-12 object-contain" />
           <div>
             <p className="text-sm font-semibold tracking-wide text-primary">CLUB CINÉ TREMPLIN</p>
             <p className="text-xs text-muted-foreground">On apprend, on tourne, on décolle.</p>

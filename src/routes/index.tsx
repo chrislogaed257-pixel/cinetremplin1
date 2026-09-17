@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import logo from "@/assets/logo.png.asset.json";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background px-4 text-center">
-      <img src={logo.url} alt="Club Ciné Tremplin" className="w-64 max-w-full" />
+      <img src={logo} alt="Club Ciné Tremplin" className="w-64 max-w-full" />
       <p className="max-w-md text-sm text-muted-foreground">
         Espace de suivi d'activité réservé aux membres du club. 
 
