@@ -326,6 +326,14 @@ function SessionCard({
               >
                 Copier le lien + identifiants
               </Button>
+              {session.public_token && (
+                <Button
+                  size="sm"
+                  onClick={() => copy(`${voteUrl}?t=${session.public_token}`, "Lien d'accès direct")}
+                >
+                  Copier le lien d'accès direct
+                </Button>
+              )}
               <Button size="sm" variant="ghost" asChild>
                 <Link to="/vote-acces">Ouvrir la page de vote</Link>
               </Button>
