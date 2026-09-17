@@ -10,33 +10,428 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as IdeesSoumissionRouteImport } from './routes/idees-soumission'
+import { Route as MentorInvitationRouteImport } from './routes/mentor-invitation'
+import { Route as MotDePasseOublieRouteImport } from './routes/mot-de-passe-oublie'
+import { Route as VoteAccesRouteImport } from './routes/vote-acces'
+import { Route as AuthenticatedAnalyseRouteImport } from './routes/_authenticated/analyse'
+import { Route as AuthenticatedCastingRouteImport } from './routes/_authenticated/casting'
+import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
+import { Route as AuthenticatedCongesRouteImport } from './routes/_authenticated/conges'
+import { Route as AuthenticatedContratsRouteImport } from './routes/_authenticated/contrats'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDiscussionRouteImport } from './routes/_authenticated/discussion'
+import { Route as AuthenticatedEquipesRouteImport } from './routes/_authenticated/equipes'
+import { Route as AuthenticatedEspaceBailleurRouteImport } from './routes/_authenticated/espace-bailleur'
+import { Route as AuthenticatedFestivalsRouteImport } from './routes/_authenticated/festivals'
+import { Route as AuthenticatedFeuilleDeServiceRouteImport } from './routes/_authenticated/feuille-de-service'
+import { Route as AuthenticatedIdeesRouteImport } from './routes/_authenticated/idees'
+import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
+import { Route as AuthenticatedMembresRouteImport } from './routes/_authenticated/membres'
+import { Route as AuthenticatedMentorRouteImport } from './routes/_authenticated/mentor'
+import { Route as AuthenticatedMentorsRouteImport } from './routes/_authenticated/mentors'
+import { Route as AuthenticatedMessagerieRouteImport } from './routes/_authenticated/messagerie'
+import { Route as AuthenticatedModificationsRouteImport } from './routes/_authenticated/modifications'
+import { Route as AuthenticatedMotDePasseRouteImport } from './routes/_authenticated/mot-de-passe'
+import { Route as AuthenticatedOrganigrammeRouteImport } from './routes/_authenticated/organigramme'
+import { Route as AuthenticatedRapportsRouteImport } from './routes/_authenticated/rapports'
+import { Route as AuthenticatedRessourcesRouteImport } from './routes/_authenticated/ressources'
+import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
+import { Route as AuthenticatedVoteRouteImport } from './routes/_authenticated/vote'
+import { Route as CastingSoumissionTokenRouteImport } from './routes/casting-soumission.$token'
+import { Route as AuthenticatedProfilIdRouteImport } from './routes/_authenticated/profil.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IdeesSoumissionRoute = IdeesSoumissionRouteImport.update({
+  id: '/idees-soumission',
+  path: '/idees-soumission',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentorInvitationRoute = MentorInvitationRouteImport.update({
+  id: '/mentor-invitation',
+  path: '/mentor-invitation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MotDePasseOublieRoute = MotDePasseOublieRouteImport.update({
+  id: '/mot-de-passe-oublie',
+  path: '/mot-de-passe-oublie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoteAccesRoute = VoteAccesRouteImport.update({
+  id: '/vote-acces',
+  path: '/vote-acces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAnalyseRoute = AuthenticatedAnalyseRouteImport.update({
+  id: '/analyse',
+  path: '/analyse',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCastingRoute = AuthenticatedCastingRouteImport.update({
+  id: '/casting',
+  path: '/casting',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedComptabiliteRoute =
+  AuthenticatedComptabiliteRouteImport.update({
+    id: '/comptabilite',
+    path: '/comptabilite',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCongesRoute = AuthenticatedCongesRouteImport.update({
+  id: '/conges',
+  path: '/conges',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContratsRoute = AuthenticatedContratsRouteImport.update({
+  id: '/contrats',
+  path: '/contrats',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDiscussionRoute = AuthenticatedDiscussionRouteImport.update({
+  id: '/discussion',
+  path: '/discussion',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEquipesRoute = AuthenticatedEquipesRouteImport.update({
+  id: '/equipes',
+  path: '/equipes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEspaceBailleurRoute =
+  AuthenticatedEspaceBailleurRouteImport.update({
+    id: '/espace-bailleur',
+    path: '/espace-bailleur',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedFestivalsRoute = AuthenticatedFestivalsRouteImport.update({
+  id: '/festivals',
+  path: '/festivals',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFeuilleDeServiceRoute =
+  AuthenticatedFeuilleDeServiceRouteImport.update({
+    id: '/feuille-de-service',
+    path: '/feuille-de-service',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedIdeesRoute = AuthenticatedIdeesRouteImport.update({
+  id: '/idees',
+  path: '/idees',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMembresRoute = AuthenticatedMembresRouteImport.update({
+  id: '/membres',
+  path: '/membres',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMentorRoute = AuthenticatedMentorRouteImport.update({
+  id: '/mentor',
+  path: '/mentor',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMentorsRoute = AuthenticatedMentorsRouteImport.update({
+  id: '/mentors',
+  path: '/mentors',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMessagerieRoute = AuthenticatedMessagerieRouteImport.update({
+  id: '/messagerie',
+  path: '/messagerie',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedModificationsRoute =
+  AuthenticatedModificationsRouteImport.update({
+    id: '/modifications',
+    path: '/modifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMotDePasseRoute = AuthenticatedMotDePasseRouteImport.update({
+  id: '/mot-de-passe',
+  path: '/mot-de-passe',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOrganigrammeRoute =
+  AuthenticatedOrganigrammeRouteImport.update({
+    id: '/organigramme',
+    path: '/organigramme',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRapportsRoute = AuthenticatedRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRessourcesRoute = AuthenticatedRessourcesRouteImport.update({
+  id: '/ressources',
+  path: '/ressources',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTachesRoute = AuthenticatedTachesRouteImport.update({
+  id: '/taches',
+  path: '/taches',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedVoteRoute = AuthenticatedVoteRouteImport.update({
+  id: '/vote',
+  path: '/vote',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const CastingSoumissionTokenRoute = CastingSoumissionTokenRouteImport.update({
+  id: '/casting-soumission/$token',
+  path: '/casting-soumission/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProfilIdRoute = AuthenticatedProfilIdRouteImport.update({
+  id: '/profil/$id',
+  path: '/profil/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/idees-soumission': typeof IdeesSoumissionRoute
+  '/mentor-invitation': typeof MentorInvitationRoute
+  '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
+  '/vote-acces': typeof VoteAccesRoute
+  '/analyse': typeof AuthenticatedAnalyseRoute
+  '/casting': typeof AuthenticatedCastingRoute
+  '/comptabilite': typeof AuthenticatedComptabiliteRoute
+  '/conges': typeof AuthenticatedCongesRoute
+  '/contrats': typeof AuthenticatedContratsRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/discussion': typeof AuthenticatedDiscussionRoute
+  '/equipes': typeof AuthenticatedEquipesRoute
+  '/espace-bailleur': typeof AuthenticatedEspaceBailleurRoute
+  '/festivals': typeof AuthenticatedFestivalsRoute
+  '/feuille-de-service': typeof AuthenticatedFeuilleDeServiceRoute
+  '/idees': typeof AuthenticatedIdeesRoute
+  '/journal': typeof AuthenticatedJournalRoute
+  '/membres': typeof AuthenticatedMembresRoute
+  '/mentor': typeof AuthenticatedMentorRoute
+  '/mentors': typeof AuthenticatedMentorsRoute
+  '/messagerie': typeof AuthenticatedMessagerieRoute
+  '/modifications': typeof AuthenticatedModificationsRoute
+  '/mot-de-passe': typeof AuthenticatedMotDePasseRoute
+  '/organigramme': typeof AuthenticatedOrganigrammeRoute
+  '/rapports': typeof AuthenticatedRapportsRoute
+  '/ressources': typeof AuthenticatedRessourcesRoute
+  '/taches': typeof AuthenticatedTachesRoute
+  '/vote': typeof AuthenticatedVoteRoute
+  '/casting-soumission/$token': typeof CastingSoumissionTokenRoute
+  '/profil/$id': typeof AuthenticatedProfilIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/idees-soumission': typeof IdeesSoumissionRoute
+  '/mentor-invitation': typeof MentorInvitationRoute
+  '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
+  '/vote-acces': typeof VoteAccesRoute
+  '/analyse': typeof AuthenticatedAnalyseRoute
+  '/casting': typeof AuthenticatedCastingRoute
+  '/comptabilite': typeof AuthenticatedComptabiliteRoute
+  '/conges': typeof AuthenticatedCongesRoute
+  '/contrats': typeof AuthenticatedContratsRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/discussion': typeof AuthenticatedDiscussionRoute
+  '/equipes': typeof AuthenticatedEquipesRoute
+  '/espace-bailleur': typeof AuthenticatedEspaceBailleurRoute
+  '/festivals': typeof AuthenticatedFestivalsRoute
+  '/feuille-de-service': typeof AuthenticatedFeuilleDeServiceRoute
+  '/idees': typeof AuthenticatedIdeesRoute
+  '/journal': typeof AuthenticatedJournalRoute
+  '/membres': typeof AuthenticatedMembresRoute
+  '/mentor': typeof AuthenticatedMentorRoute
+  '/mentors': typeof AuthenticatedMentorsRoute
+  '/messagerie': typeof AuthenticatedMessagerieRoute
+  '/modifications': typeof AuthenticatedModificationsRoute
+  '/mot-de-passe': typeof AuthenticatedMotDePasseRoute
+  '/organigramme': typeof AuthenticatedOrganigrammeRoute
+  '/rapports': typeof AuthenticatedRapportsRoute
+  '/ressources': typeof AuthenticatedRessourcesRoute
+  '/taches': typeof AuthenticatedTachesRoute
+  '/vote': typeof AuthenticatedVoteRoute
+  '/casting-soumission/$token': typeof CastingSoumissionTokenRoute
+  '/profil/$id': typeof AuthenticatedProfilIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/idees-soumission': typeof IdeesSoumissionRoute
+  '/mentor-invitation': typeof MentorInvitationRoute
+  '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
+  '/vote-acces': typeof VoteAccesRoute
+  '/_authenticated/analyse': typeof AuthenticatedAnalyseRoute
+  '/_authenticated/casting': typeof AuthenticatedCastingRoute
+  '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
+  '/_authenticated/conges': typeof AuthenticatedCongesRoute
+  '/_authenticated/contrats': typeof AuthenticatedContratsRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/discussion': typeof AuthenticatedDiscussionRoute
+  '/_authenticated/equipes': typeof AuthenticatedEquipesRoute
+  '/_authenticated/espace-bailleur': typeof AuthenticatedEspaceBailleurRoute
+  '/_authenticated/festivals': typeof AuthenticatedFestivalsRoute
+  '/_authenticated/feuille-de-service': typeof AuthenticatedFeuilleDeServiceRoute
+  '/_authenticated/idees': typeof AuthenticatedIdeesRoute
+  '/_authenticated/journal': typeof AuthenticatedJournalRoute
+  '/_authenticated/membres': typeof AuthenticatedMembresRoute
+  '/_authenticated/mentor': typeof AuthenticatedMentorRoute
+  '/_authenticated/mentors': typeof AuthenticatedMentorsRoute
+  '/_authenticated/messagerie': typeof AuthenticatedMessagerieRoute
+  '/_authenticated/modifications': typeof AuthenticatedModificationsRoute
+  '/_authenticated/mot-de-passe': typeof AuthenticatedMotDePasseRoute
+  '/_authenticated/organigramme': typeof AuthenticatedOrganigrammeRoute
+  '/_authenticated/rapports': typeof AuthenticatedRapportsRoute
+  '/_authenticated/ressources': typeof AuthenticatedRessourcesRoute
+  '/_authenticated/taches': typeof AuthenticatedTachesRoute
+  '/_authenticated/vote': typeof AuthenticatedVoteRoute
+  '/casting-soumission/$token': typeof CastingSoumissionTokenRoute
+  '/_authenticated/profil/$id': typeof AuthenticatedProfilIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/idees-soumission'
+    | '/mentor-invitation'
+    | '/mot-de-passe-oublie'
+    | '/vote-acces'
+    | '/analyse'
+    | '/casting'
+    | '/comptabilite'
+    | '/conges'
+    | '/contrats'
+    | '/dashboard'
+    | '/discussion'
+    | '/equipes'
+    | '/espace-bailleur'
+    | '/festivals'
+    | '/feuille-de-service'
+    | '/idees'
+    | '/journal'
+    | '/membres'
+    | '/mentor'
+    | '/mentors'
+    | '/messagerie'
+    | '/modifications'
+    | '/mot-de-passe'
+    | '/organigramme'
+    | '/rapports'
+    | '/ressources'
+    | '/taches'
+    | '/vote'
+    | '/casting-soumission/$token'
+    | '/profil/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/idees-soumission'
+    | '/mentor-invitation'
+    | '/mot-de-passe-oublie'
+    | '/vote-acces'
+    | '/analyse'
+    | '/casting'
+    | '/comptabilite'
+    | '/conges'
+    | '/contrats'
+    | '/dashboard'
+    | '/discussion'
+    | '/equipes'
+    | '/espace-bailleur'
+    | '/festivals'
+    | '/feuille-de-service'
+    | '/idees'
+    | '/journal'
+    | '/membres'
+    | '/mentor'
+    | '/mentors'
+    | '/messagerie'
+    | '/modifications'
+    | '/mot-de-passe'
+    | '/organigramme'
+    | '/rapports'
+    | '/ressources'
+    | '/taches'
+    | '/vote'
+    | '/casting-soumission/$token'
+    | '/profil/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/idees-soumission'
+    | '/mentor-invitation'
+    | '/mot-de-passe-oublie'
+    | '/vote-acces'
+    | '/_authenticated/analyse'
+    | '/_authenticated/casting'
+    | '/_authenticated/comptabilite'
+    | '/_authenticated/conges'
+    | '/_authenticated/contrats'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/discussion'
+    | '/_authenticated/equipes'
+    | '/_authenticated/espace-bailleur'
+    | '/_authenticated/festivals'
+    | '/_authenticated/feuille-de-service'
+    | '/_authenticated/idees'
+    | '/_authenticated/journal'
+    | '/_authenticated/membres'
+    | '/_authenticated/mentor'
+    | '/_authenticated/mentors'
+    | '/_authenticated/messagerie'
+    | '/_authenticated/modifications'
+    | '/_authenticated/mot-de-passe'
+    | '/_authenticated/organigramme'
+    | '/_authenticated/rapports'
+    | '/_authenticated/ressources'
+    | '/_authenticated/taches'
+    | '/_authenticated/vote'
+    | '/casting-soumission/$token'
+    | '/_authenticated/profil/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  IdeesSoumissionRoute: typeof IdeesSoumissionRoute
+  MentorInvitationRoute: typeof MentorInvitationRoute
+  MotDePasseOublieRoute: typeof MotDePasseOublieRoute
+  VoteAccesRoute: typeof VoteAccesRoute
+  CastingSoumissionTokenRoute: typeof CastingSoumissionTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +443,301 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/idees-soumission': {
+      id: '/idees-soumission'
+      path: '/idees-soumission'
+      fullPath: '/idees-soumission'
+      preLoaderRoute: typeof IdeesSoumissionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentor-invitation': {
+      id: '/mentor-invitation'
+      path: '/mentor-invitation'
+      fullPath: '/mentor-invitation'
+      preLoaderRoute: typeof MentorInvitationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mot-de-passe-oublie': {
+      id: '/mot-de-passe-oublie'
+      path: '/mot-de-passe-oublie'
+      fullPath: '/mot-de-passe-oublie'
+      preLoaderRoute: typeof MotDePasseOublieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vote-acces': {
+      id: '/vote-acces'
+      path: '/vote-acces'
+      fullPath: '/vote-acces'
+      preLoaderRoute: typeof VoteAccesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/analyse': {
+      id: '/_authenticated/analyse'
+      path: '/analyse'
+      fullPath: '/analyse'
+      preLoaderRoute: typeof AuthenticatedAnalyseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/casting': {
+      id: '/_authenticated/casting'
+      path: '/casting'
+      fullPath: '/casting'
+      preLoaderRoute: typeof AuthenticatedCastingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/comptabilite': {
+      id: '/_authenticated/comptabilite'
+      path: '/comptabilite'
+      fullPath: '/comptabilite'
+      preLoaderRoute: typeof AuthenticatedComptabiliteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/conges': {
+      id: '/_authenticated/conges'
+      path: '/conges'
+      fullPath: '/conges'
+      preLoaderRoute: typeof AuthenticatedCongesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/contrats': {
+      id: '/_authenticated/contrats'
+      path: '/contrats'
+      fullPath: '/contrats'
+      preLoaderRoute: typeof AuthenticatedContratsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/discussion': {
+      id: '/_authenticated/discussion'
+      path: '/discussion'
+      fullPath: '/discussion'
+      preLoaderRoute: typeof AuthenticatedDiscussionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/equipes': {
+      id: '/_authenticated/equipes'
+      path: '/equipes'
+      fullPath: '/equipes'
+      preLoaderRoute: typeof AuthenticatedEquipesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/espace-bailleur': {
+      id: '/_authenticated/espace-bailleur'
+      path: '/espace-bailleur'
+      fullPath: '/espace-bailleur'
+      preLoaderRoute: typeof AuthenticatedEspaceBailleurRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/festivals': {
+      id: '/_authenticated/festivals'
+      path: '/festivals'
+      fullPath: '/festivals'
+      preLoaderRoute: typeof AuthenticatedFestivalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/feuille-de-service': {
+      id: '/_authenticated/feuille-de-service'
+      path: '/feuille-de-service'
+      fullPath: '/feuille-de-service'
+      preLoaderRoute: typeof AuthenticatedFeuilleDeServiceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/idees': {
+      id: '/_authenticated/idees'
+      path: '/idees'
+      fullPath: '/idees'
+      preLoaderRoute: typeof AuthenticatedIdeesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/journal': {
+      id: '/_authenticated/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof AuthenticatedJournalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/membres': {
+      id: '/_authenticated/membres'
+      path: '/membres'
+      fullPath: '/membres'
+      preLoaderRoute: typeof AuthenticatedMembresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mentor': {
+      id: '/_authenticated/mentor'
+      path: '/mentor'
+      fullPath: '/mentor'
+      preLoaderRoute: typeof AuthenticatedMentorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mentors': {
+      id: '/_authenticated/mentors'
+      path: '/mentors'
+      fullPath: '/mentors'
+      preLoaderRoute: typeof AuthenticatedMentorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messagerie': {
+      id: '/_authenticated/messagerie'
+      path: '/messagerie'
+      fullPath: '/messagerie'
+      preLoaderRoute: typeof AuthenticatedMessagerieRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/modifications': {
+      id: '/_authenticated/modifications'
+      path: '/modifications'
+      fullPath: '/modifications'
+      preLoaderRoute: typeof AuthenticatedModificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mot-de-passe': {
+      id: '/_authenticated/mot-de-passe'
+      path: '/mot-de-passe'
+      fullPath: '/mot-de-passe'
+      preLoaderRoute: typeof AuthenticatedMotDePasseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/organigramme': {
+      id: '/_authenticated/organigramme'
+      path: '/organigramme'
+      fullPath: '/organigramme'
+      preLoaderRoute: typeof AuthenticatedOrganigrammeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/rapports': {
+      id: '/_authenticated/rapports'
+      path: '/rapports'
+      fullPath: '/rapports'
+      preLoaderRoute: typeof AuthenticatedRapportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ressources': {
+      id: '/_authenticated/ressources'
+      path: '/ressources'
+      fullPath: '/ressources'
+      preLoaderRoute: typeof AuthenticatedRessourcesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/taches': {
+      id: '/_authenticated/taches'
+      path: '/taches'
+      fullPath: '/taches'
+      preLoaderRoute: typeof AuthenticatedTachesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vote': {
+      id: '/_authenticated/vote'
+      path: '/vote'
+      fullPath: '/vote'
+      preLoaderRoute: typeof AuthenticatedVoteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/casting-soumission/$token': {
+      id: '/casting-soumission/$token'
+      path: '/casting-soumission/$token'
+      fullPath: '/casting-soumission/$token'
+      preLoaderRoute: typeof CastingSoumissionTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/profil/$id': {
+      id: '/_authenticated/profil/$id'
+      path: '/profil/$id'
+      fullPath: '/profil/$id'
+      preLoaderRoute: typeof AuthenticatedProfilIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAnalyseRoute: typeof AuthenticatedAnalyseRoute
+  AuthenticatedCastingRoute: typeof AuthenticatedCastingRoute
+  AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
+  AuthenticatedCongesRoute: typeof AuthenticatedCongesRoute
+  AuthenticatedContratsRoute: typeof AuthenticatedContratsRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDiscussionRoute: typeof AuthenticatedDiscussionRoute
+  AuthenticatedEquipesRoute: typeof AuthenticatedEquipesRoute
+  AuthenticatedEspaceBailleurRoute: typeof AuthenticatedEspaceBailleurRoute
+  AuthenticatedFestivalsRoute: typeof AuthenticatedFestivalsRoute
+  AuthenticatedFeuilleDeServiceRoute: typeof AuthenticatedFeuilleDeServiceRoute
+  AuthenticatedIdeesRoute: typeof AuthenticatedIdeesRoute
+  AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
+  AuthenticatedMembresRoute: typeof AuthenticatedMembresRoute
+  AuthenticatedMentorRoute: typeof AuthenticatedMentorRoute
+  AuthenticatedMentorsRoute: typeof AuthenticatedMentorsRoute
+  AuthenticatedMessagerieRoute: typeof AuthenticatedMessagerieRoute
+  AuthenticatedModificationsRoute: typeof AuthenticatedModificationsRoute
+  AuthenticatedMotDePasseRoute: typeof AuthenticatedMotDePasseRoute
+  AuthenticatedOrganigrammeRoute: typeof AuthenticatedOrganigrammeRoute
+  AuthenticatedRapportsRoute: typeof AuthenticatedRapportsRoute
+  AuthenticatedRessourcesRoute: typeof AuthenticatedRessourcesRoute
+  AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
+  AuthenticatedVoteRoute: typeof AuthenticatedVoteRoute
+  AuthenticatedProfilIdRoute: typeof AuthenticatedProfilIdRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAnalyseRoute: AuthenticatedAnalyseRoute,
+  AuthenticatedCastingRoute: AuthenticatedCastingRoute,
+  AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
+  AuthenticatedCongesRoute: AuthenticatedCongesRoute,
+  AuthenticatedContratsRoute: AuthenticatedContratsRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDiscussionRoute: AuthenticatedDiscussionRoute,
+  AuthenticatedEquipesRoute: AuthenticatedEquipesRoute,
+  AuthenticatedEspaceBailleurRoute: AuthenticatedEspaceBailleurRoute,
+  AuthenticatedFestivalsRoute: AuthenticatedFestivalsRoute,
+  AuthenticatedFeuilleDeServiceRoute: AuthenticatedFeuilleDeServiceRoute,
+  AuthenticatedIdeesRoute: AuthenticatedIdeesRoute,
+  AuthenticatedJournalRoute: AuthenticatedJournalRoute,
+  AuthenticatedMembresRoute: AuthenticatedMembresRoute,
+  AuthenticatedMentorRoute: AuthenticatedMentorRoute,
+  AuthenticatedMentorsRoute: AuthenticatedMentorsRoute,
+  AuthenticatedMessagerieRoute: AuthenticatedMessagerieRoute,
+  AuthenticatedModificationsRoute: AuthenticatedModificationsRoute,
+  AuthenticatedMotDePasseRoute: AuthenticatedMotDePasseRoute,
+  AuthenticatedOrganigrammeRoute: AuthenticatedOrganigrammeRoute,
+  AuthenticatedRapportsRoute: AuthenticatedRapportsRoute,
+  AuthenticatedRessourcesRoute: AuthenticatedRessourcesRoute,
+  AuthenticatedTachesRoute: AuthenticatedTachesRoute,
+  AuthenticatedVoteRoute: AuthenticatedVoteRoute,
+  AuthenticatedProfilIdRoute: AuthenticatedProfilIdRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  IdeesSoumissionRoute: IdeesSoumissionRoute,
+  MentorInvitationRoute: MentorInvitationRoute,
+  MotDePasseOublieRoute: MotDePasseOublieRoute,
+  VoteAccesRoute: VoteAccesRoute,
+  CastingSoumissionTokenRoute: CastingSoumissionTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
