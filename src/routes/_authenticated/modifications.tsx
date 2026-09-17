@@ -20,6 +20,7 @@ import {
 import { TemplatesSettings } from "@/components/TemplatesSettings";
 import { AccountsSettings } from "@/components/AccountsSettings";
 import { DelaysSettings } from "@/components/DelaysSettings";
+import { FormFieldsSettings } from "@/components/FormFieldsSettings";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/modifications")({

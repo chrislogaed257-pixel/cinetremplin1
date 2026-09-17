@@ -30,6 +30,7 @@ export const Route = createFileRoute("/mentor-invitation")({
 
 function MentorInvitePage() {
   const [code, setCode] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [done, setDone] = useState(false);
@@ -39,7 +40,7 @@ function MentorInvitePage() {
     e.preventDefault();
     setBusy(true);
     try {
-      await acceptMentorInvite({ data: { code, email, password } });
+      await acceptMentorInvite({ data: { code, email, password, fullName } });
       setDone(true);
       toast.success("Accès créé");
     } catch (err) {
@@ -53,7 +54,7 @@ function MentorInvitePage() {
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-10">
       <Card>
         <CardHeader>
-          <CardTitle>🎬 Invitation mentor</CardTitle>
+          <CardTitle>Accès mentor</CardTitle>
         </CardHeader>
         <CardContent>
           {done ? (
@@ -65,9 +66,17 @@ function MentorInvitePage() {
             </div>
           ) : (
             <form className="space-y-3" onSubmit={submit}>
+              <p className="text-sm text-muted-foreground">
+                Accès libre : renseignez votre nom, votre email et un mot de passe. Le code
+                d'invitation reste facultatif, uniquement si la production vous en a transmis un.
+              </p>
               <div className="space-y-1.5">
-                <Label htmlFor="c">Code d'invitation</Label>
-                <Input id="c" value={code} onChange={(e) => setCode(e.target.value)} required />
+                <Label htmlFor="fn">Nom complet</Label>
+                <Input id="fn" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="c">Code d'invitation (facultatif)</Label>
+                <Input id="c" value={code} onChange={(e) => setCode(e.target.value)} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="e">Email</Label>
