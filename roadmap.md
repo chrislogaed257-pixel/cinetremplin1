@@ -75,8 +75,13 @@
 - [ ] Phase G — vérifications de cohérence
 
 ## Mission d'amélioration globale
+- [x] Fondations base de données : rendu de tâche, validation de rapport, archives, sécurité des votes
+- [x] Menu : icônes vectorielles, réordonnancement par glisser-déposer, position mémorisée, flèche de retour
+- [x] Notifications cliquables ouvrant la rubrique concernée
+- [x] Œil d'affichage du mot de passe à la connexion
+- [x] Mot de passe oublié : nom, poste, identifiant et mot de passe provisoire à transmettre
+- [x] Archives du club : dépenses, fonds, membres, analyses de votes, feuilles de service
 - [ ] Garantir l'accès complet du Producteur général, hors sessions de vote ouvertes
-- [ ] Enrichir les demandes de mot de passe oublié
 - [ ] Compléter le cycle Tâches vers Rapports, validation, délais et notifications
 - [ ] Améliorer navigation, ordre du menu, retour, position conservée et connexion
 - [ ] Rendre les notifications actionnables et vérifier tous leurs destinataires

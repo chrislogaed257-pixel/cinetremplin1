@@ -17,6 +17,7 @@ import { Route as MentorInvitationRouteImport } from './routes/mentor-invitation
 import { Route as MotDePasseOublieRouteImport } from './routes/mot-de-passe-oublie'
 import { Route as VoteAccesRouteImport } from './routes/vote-acces'
 import { Route as AuthenticatedAnalyseRouteImport } from './routes/_authenticated/analyse'
+import { Route as AuthenticatedArchivesRouteImport } from './routes/_authenticated/archives'
 import { Route as AuthenticatedCastingRouteImport } from './routes/_authenticated/casting'
 import { Route as AuthenticatedComptabiliteRouteImport } from './routes/_authenticated/comptabilite'
 import { Route as AuthenticatedCongesRouteImport } from './routes/_authenticated/conges'
@@ -80,6 +81,11 @@ const VoteAccesRoute = VoteAccesRouteImport.update({
 const AuthenticatedAnalyseRoute = AuthenticatedAnalyseRouteImport.update({
   id: '/analyse',
   path: '/analyse',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedArchivesRoute = AuthenticatedArchivesRouteImport.update({
+  id: '/archives',
+  path: '/archives',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCastingRoute = AuthenticatedCastingRouteImport.update({
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/vote-acces': typeof VoteAccesRoute
   '/analyse': typeof AuthenticatedAnalyseRoute
+  '/archives': typeof AuthenticatedArchivesRoute
   '/casting': typeof AuthenticatedCastingRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/conges': typeof AuthenticatedCongesRoute
@@ -255,6 +262,7 @@ export interface FileRoutesByTo {
   '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/vote-acces': typeof VoteAccesRoute
   '/analyse': typeof AuthenticatedAnalyseRoute
+  '/archives': typeof AuthenticatedArchivesRoute
   '/casting': typeof AuthenticatedCastingRoute
   '/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/conges': typeof AuthenticatedCongesRoute
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/vote-acces': typeof VoteAccesRoute
   '/_authenticated/analyse': typeof AuthenticatedAnalyseRoute
+  '/_authenticated/archives': typeof AuthenticatedArchivesRoute
   '/_authenticated/casting': typeof AuthenticatedCastingRoute
   '/_authenticated/comptabilite': typeof AuthenticatedComptabiliteRoute
   '/_authenticated/conges': typeof AuthenticatedCongesRoute
@@ -327,6 +336,7 @@ export interface FileRouteTypes {
     | '/mot-de-passe-oublie'
     | '/vote-acces'
     | '/analyse'
+    | '/archives'
     | '/casting'
     | '/comptabilite'
     | '/conges'
@@ -361,6 +371,7 @@ export interface FileRouteTypes {
     | '/mot-de-passe-oublie'
     | '/vote-acces'
     | '/analyse'
+    | '/archives'
     | '/casting'
     | '/comptabilite'
     | '/conges'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/mot-de-passe-oublie'
     | '/vote-acces'
     | '/_authenticated/analyse'
+    | '/_authenticated/archives'
     | '/_authenticated/casting'
     | '/_authenticated/comptabilite'
     | '/_authenticated/conges'
@@ -490,6 +502,13 @@ declare module '@tanstack/react-router' {
       path: '/analyse'
       fullPath: '/analyse'
       preLoaderRoute: typeof AuthenticatedAnalyseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/archives': {
+      id: '/_authenticated/archives'
+      path: '/archives'
+      fullPath: '/archives'
+      preLoaderRoute: typeof AuthenticatedArchivesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/casting': {
@@ -672,6 +691,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnalyseRoute: typeof AuthenticatedAnalyseRoute
+  AuthenticatedArchivesRoute: typeof AuthenticatedArchivesRoute
   AuthenticatedCastingRoute: typeof AuthenticatedCastingRoute
   AuthenticatedComptabiliteRoute: typeof AuthenticatedComptabiliteRoute
   AuthenticatedCongesRoute: typeof AuthenticatedCongesRoute
@@ -700,6 +720,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnalyseRoute: AuthenticatedAnalyseRoute,
+  AuthenticatedArchivesRoute: AuthenticatedArchivesRoute,
   AuthenticatedCastingRoute: AuthenticatedCastingRoute,
   AuthenticatedComptabiliteRoute: AuthenticatedComptabiliteRoute,
   AuthenticatedCongesRoute: AuthenticatedCongesRoute,
