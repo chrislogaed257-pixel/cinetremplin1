@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { lookupMember, sendPasswordRequest } from "@/lib/password.functions";
-import logo from "@/assets/logo.png.asset.json";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -83,7 +83,7 @@ function ForgotPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <Card className="w-full max-w-lg">
         <CardHeader className="items-center text-center">
-          <img src={logo.url} alt="Club Ciné Tremplin" className="mx-auto h-20 object-contain" />
+          <img src={logo} alt="Club Ciné Tremplin" className="mx-auto h-20 object-contain" />
           <CardTitle className="text-base">🔑 Mot de passe oublié</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

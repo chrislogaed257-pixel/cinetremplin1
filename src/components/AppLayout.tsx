@@ -8,7 +8,7 @@ import { PositionSwitcher } from "@/components/PositionSwitcher";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { PasswordGate } from "@/components/PasswordGate";
 import { usePrefs } from "@/lib/prefs";
-import logo from "@/assets/logo.png.asset.json";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import type { ReactNode } from "react";
@@ -78,7 +78,7 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
       <aside className="border-b border-border lg:min-h-screen lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r">
         <div className="flex items-center gap-3 px-4 py-3">
           <img
-            src={logo.url}
+            src={logo}
             alt="Club Ciné Tremplin"
             className="h-10 w-10 rounded object-contain"
           />

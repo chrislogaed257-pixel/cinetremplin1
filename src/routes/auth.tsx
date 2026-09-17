@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { bootstrapAdmin, getBootstrapStatus } from "@/lib/admin.functions";
-import logo from "@/assets/logo.png.asset.json";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,7 +66,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="items-center text-center">
-          <img src={logo.url} alt="Club Ciné Tremplin" className="mx-auto h-24 object-contain" />
+          <img src={logo} alt="Club Ciné Tremplin" className="mx-auto h-24 object-contain" />
           <CardTitle className="text-base">
             {needsBootstrap ? "Créer le compte Producteur général" : "Connexion"}
           </CardTitle>
