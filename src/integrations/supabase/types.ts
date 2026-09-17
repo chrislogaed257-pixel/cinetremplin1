@@ -168,7 +168,9 @@ export type Database = {
       casting_applications: {
         Row: {
           age: string
+          availability: string
           call_id: string
+          cinema_experience: boolean | null
           city: string
           comment: string
           created_at: string
@@ -176,14 +178,21 @@ export type Database = {
           full_name: string
           id: string
           link: string
+          member_id: string | null
+          neighborhood: string
           note: string
           phone: string
+          province: string
+          response_sent_at: string | null
+          spoken_language: string
           status: string
           updated_at: string
         }
         Insert: {
           age?: string
+          availability?: string
           call_id: string
+          cinema_experience?: boolean | null
           city?: string
           comment?: string
           created_at?: string
@@ -191,14 +200,21 @@ export type Database = {
           full_name: string
           id?: string
           link?: string
+          member_id?: string | null
+          neighborhood?: string
           note?: string
           phone?: string
+          province?: string
+          response_sent_at?: string | null
+          spoken_language?: string
           status?: string
           updated_at?: string
         }
         Update: {
           age?: string
+          availability?: string
           call_id?: string
+          cinema_experience?: boolean | null
           city?: string
           comment?: string
           created_at?: string
@@ -206,8 +222,13 @@ export type Database = {
           full_name?: string
           id?: string
           link?: string
+          member_id?: string | null
+          neighborhood?: string
           note?: string
           phone?: string
+          province?: string
+          response_sent_at?: string | null
+          spoken_language?: string
           status?: string
           updated_at?: string
         }
@@ -217,6 +238,13 @@ export type Database = {
             columns: ["call_id"]
             isOneToOne: false
             referencedRelation: "casting_calls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_applications_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -230,6 +258,7 @@ export type Database = {
           is_open: boolean
           project_id: string | null
           public_token: string
+          selection_finalized_at: string | null
           title: string
           updated_at: string
         }
@@ -241,6 +270,7 @@ export type Database = {
           is_open?: boolean
           project_id?: string | null
           public_token?: string
+          selection_finalized_at?: string | null
           title: string
           updated_at?: string
         }
@@ -252,6 +282,7 @@ export type Database = {
           is_open?: boolean
           project_id?: string | null
           public_token?: string
+          selection_finalized_at?: string | null
           title?: string
           updated_at?: string
         }
@@ -268,6 +299,44 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      club_archives: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          entity_id: string | null
+          id: string
+          snapshot: Json
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by?: string | null
+          entity_id?: string | null
+          id?: string
+          snapshot?: Json
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          entity_id?: string | null
+          id?: string
+          snapshot?: Json
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_archives_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1581,30 +1650,48 @@ export type Database = {
           author_id: string
           content: string
           created_at: string
+          decided_at: string | null
+          decision: string
+          decision_comment: string
+          extension_due_date: string | null
           id: string
           link: string | null
+          project_id: string | null
           recipient_id: string | null
           status: Database["public"]["Enums"]["report_status"]
+          task_id: string | null
           title: string
         }
         Insert: {
           author_id: string
           content?: string
           created_at?: string
+          decided_at?: string | null
+          decision?: string
+          decision_comment?: string
+          extension_due_date?: string | null
           id?: string
           link?: string | null
+          project_id?: string | null
           recipient_id?: string | null
           status?: Database["public"]["Enums"]["report_status"]
+          task_id?: string | null
           title: string
         }
         Update: {
           author_id?: string
           content?: string
           created_at?: string
+          decided_at?: string | null
+          decision?: string
+          decision_comment?: string
+          extension_due_date?: string | null
           id?: string
           link?: string | null
+          project_id?: string | null
           recipient_id?: string | null
           status?: Database["public"]["Enums"]["report_status"]
+          task_id?: string | null
           title?: string
         }
         Relationships: [
@@ -1616,10 +1703,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "reports_recipient_id_fkey"
             columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -1674,7 +1775,10 @@ export type Database = {
           owner_id: string
           phase_id: string | null
           project_id: string | null
+          received_at: string | null
           status: Database["public"]["Enums"]["task_status"]
+          submission_link: string | null
+          submitted_at: string | null
           title: string
           updated_at: string
         }
@@ -1689,7 +1793,10 @@ export type Database = {
           owner_id: string
           phase_id?: string | null
           project_id?: string | null
+          received_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          submission_link?: string | null
+          submitted_at?: string | null
           title: string
           updated_at?: string
         }
@@ -1704,7 +1811,10 @@ export type Database = {
           owner_id?: string
           phase_id?: string | null
           project_id?: string | null
+          received_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          submission_link?: string | null
+          submitted_at?: string | null
           title?: string
           updated_at?: string
         }
@@ -1962,10 +2072,46 @@ export type Database = {
         }
         Relationships: []
       }
+      vote_security_events: {
+        Row: {
+          created_at: string
+          detail: string
+          event_type: string
+          id: string
+          session_id: string
+          token_fingerprint: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string
+          event_type: string
+          id?: string
+          session_id: string
+          token_fingerprint?: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string
+          event_type?: string
+          id?: string
+          session_id?: string
+          token_fingerprint?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_security_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "vote_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vote_sessions: {
         Row: {
           access_code: string
           access_login: string
+          archived_at: string | null
           closed_at: string | null
           created_at: string
           created_by: string | null
@@ -1974,9 +2120,12 @@ export type Database = {
           individual_codes: boolean
           live_results: boolean
           max_votes: number
+          mentor_token: string | null
           opened_at: string | null
           proclamation: string
+          public_token: string | null
           require_distinct: boolean
+          result_snapshot: Json | null
           status: string
           title: string
           updated_at: string
@@ -1984,6 +2133,7 @@ export type Database = {
         Insert: {
           access_code?: string
           access_login?: string
+          archived_at?: string | null
           closed_at?: string | null
           created_at?: string
           created_by?: string | null
@@ -1992,9 +2142,12 @@ export type Database = {
           individual_codes?: boolean
           live_results?: boolean
           max_votes?: number
+          mentor_token?: string | null
           opened_at?: string | null
           proclamation?: string
+          public_token?: string | null
           require_distinct?: boolean
+          result_snapshot?: Json | null
           status?: string
           title: string
           updated_at?: string
@@ -2002,6 +2155,7 @@ export type Database = {
         Update: {
           access_code?: string
           access_login?: string
+          archived_at?: string | null
           closed_at?: string | null
           created_at?: string
           created_by?: string | null
@@ -2010,9 +2164,12 @@ export type Database = {
           individual_codes?: boolean
           live_results?: boolean
           max_votes?: number
+          mentor_token?: string | null
           opened_at?: string | null
           proclamation?: string
+          public_token?: string | null
           require_distinct?: boolean
+          result_snapshot?: Json | null
           status?: string
           title?: string
           updated_at?: string
@@ -2050,6 +2207,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      archive_vote_session: {
+        Args: { _proclamation: string; _session: string; _snapshot: Json }
+        Returns: undefined
+      }
       can_access_conversation: {
         Args: { _conv: string; _user_id: string }
         Returns: boolean
@@ -2062,6 +2223,19 @@ export type Database = {
         Returns: boolean
       }
       can_vote_ideas: { Args: { _user_id: string }; Returns: boolean }
+      cast_anonymous_vote: {
+        Args: { _code: string; _session: string; _token: string }
+        Returns: Json
+      }
+      decide_task_report: {
+        Args: {
+          _comment: string
+          _decision: string
+          _extension?: string
+          _report: string
+        }
+        Returns: undefined
+      }
       funder_can_see: {
         Args: { _funder: string; _user_id: string }
         Returns: boolean
@@ -2095,6 +2269,10 @@ export type Database = {
       }
       is_supervisor: { Args: { _user_id: string }; Returns: boolean }
       send_pending_reminders: { Args: never; Returns: number }
+      submit_task_result: {
+        Args: { _link: string; _task: string }
+        Returns: string
+      }
       vote_results: {
         Args: { _session: string }
         Returns: {
