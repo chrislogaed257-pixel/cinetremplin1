@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/AppLayout";
-import { useOrgContext, basePositionNamesOf } from "@/hooks/useOrg";
+import { useOrgContext, basePositionNamesOf, positionNamesOf } from "@/hooks/useOrg";
 import { Chat, useConversation } from "@/components/Chat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -181,11 +181,15 @@ function LeavesPage() {
                     <SelectValue placeholder="Choisir un supérieur" />
                   </SelectTrigger>
                   <SelectContent>
-                    {validators.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.full_name}
-                      </SelectItem>
-                    ))}
+                    {validators.map((p) => {
+                      const postes = positionNamesOf(p.id, org.profilePositions, org.positions);
+                      return (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.full_name}
+                          {postes.length ? ` : ${postes.join(", ")}` : ""}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>

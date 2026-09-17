@@ -37,7 +37,119 @@ type Report = {
   created_at: string;
 };
 
+type Comment = { id: string; report_id: string; author_id: string; content: string; link?: string | null };
+
 const statusLabel = { sent: "Envoyé", read: "Lu", validated: "Validé" } as const;
+
+/**
+ * Carte de rapport définie au niveau du module : ainsi le champ « Réponse »
+ * n'est pas recréé à chaque frappe et le curseur reste dans la zone de saisie.
+ */
+function ReportCard({
+  r,
+  canModerate,
+  comments,
+  name,
+  onStatus,
+  onComment,
+}: {
+  r: Report;
+  canModerate: boolean;
+  comments: Comment[];
+  name: (id: string | null) => string;
+  onStatus: (status: Report["status"]) => void;
+  onComment: (content: string, link: string) => Promise<void> | void;
+}) {
+  const [answer, setAnswer] = useState("");
+  const [answerLink, setAnswerLink] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submitAnswer() {
+    if (!answer.trim()) {
+      toast.error("Écrivez d'abord votre réponse.");
+      return;
+    }
+    setBusy(true);
+    try {
+      await onComment(answer.trim(), answerLink.trim());
+      setAnswer("");
+      setAnswerLink("");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardContent className="space-y-2 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="mr-auto font-medium">{r.title}</p>
+          <Badge variant={r.status === "validated" ? "default" : "secondary"}>
+            {statusLabel[r.status]}
+          </Badge>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {name(r.author_id)} vers {name(r.recipient_id)} :{" "}
+          {new Date(r.created_at).toLocaleString("fr-FR")}
+        </p>
+        <p className="whitespace-pre-wrap text-sm">{r.content}</p>
+        {r.link && (
+          <a href={r.link} target="_blank" rel="noreferrer" className="text-sm text-primary underline">
+            Pièce jointe / lien
+          </a>
+        )}
+        {comments.length > 0 && (
+          <div className="space-y-1 border-t border-border pt-2">
+            {comments.map((c) => (
+              <p key={c.id} className="text-xs text-muted-foreground">
+                <span className="text-foreground">{name(c.author_id)}</span> : {c.content}
+                {c.link && (
+                  <>
+                    {" "}
+                    <a href={c.link} target="_blank" rel="noreferrer" className="text-primary underline">
+                      lien joint
+                    </a>
+                  </>
+                )}
+              </p>
+            ))}
+          </div>
+        )}
+        {canModerate && (
+          <div className="space-y-2 border-t border-border pt-2">
+            <div className="space-y-1.5">
+              <Label htmlFor={`answer-${r.id}`}>Réponse</Label>
+              <Textarea
+                id={`answer-${r.id}`}
+                rows={3}
+                placeholder="Écrivez votre réponse au rapport"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+              />
+            </div>
+            <Input
+              type="url"
+              placeholder="Lien Google Drive ou site (optionnel)"
+              value={answerLink}
+              onChange={(e) => setAnswerLink(e.target.value)}
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" disabled={busy} onClick={() => void submitAnswer()}>
+                Envoyer la réponse
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => onStatus("validated")}>
+                Approuver le rapport
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => onStatus("read")}>
+                Marquer lu
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 function ReportsPage() {
   const { data: me } = useMe();
@@ -46,15 +158,16 @@ function ReportsPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [link, setLink] = useState("");
-  const [comment, setComment] = useState<Record<string, string>>({});
-  const [commentLink, setCommentLink] = useState<Record<string, string>>({});
   const [recipient, setRecipient] = useState("");
   const { data: links = [] } = useManagerLinks();
 
   const reports = useQuery({
     queryKey: ["reports", "all"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("reports").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("reports")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as Report[];
     },
@@ -68,7 +181,7 @@ function ReportsPage() {
         .select("*")
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as Comment[];
     },
   });
 
@@ -103,107 +216,34 @@ function ReportsPage() {
       const { error } = await supabase.from("reports").update({ status }).eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["reports"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["reports"] });
+      toast.success("Rapport mis à jour");
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const addComment = useMutation({
-    mutationFn: async (reportId: string) => {
-      const { error } = await supabase
-        .from("report_comments")
-        .insert({
-          report_id: reportId,
-          author_id: me!.userId,
-          content: comment[reportId] ?? "",
-          link: commentLink[reportId] || null,
-        });
-      if (error) throw error;
-    },
-    onSuccess: (_d, reportId) => {
-      setComment((c) => ({ ...c, [reportId]: "" }));
-      setCommentLink((c) => ({ ...c, [reportId]: "" }));
-      qc.invalidateQueries({ queryKey: ["report_comments"] });
-      playConfirm();
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
+  async function addComment(reportId: string, content: string, link: string) {
+    const { error } = await supabase.from("report_comments").insert({
+      report_id: reportId,
+      author_id: me!.userId,
+      content,
+      link: link || null,
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    qc.invalidateQueries({ queryKey: ["report_comments"] });
+    playConfirm();
+    toast.success("Réponse envoyée");
+  }
 
   const name = (id: string | null) => profiles.find((p) => p.id === id)?.full_name ?? "—";
   const all = reports.data ?? [];
   const mine = all.filter((r) => r.author_id === me?.userId);
   const received = all.filter((r) => r.author_id !== me?.userId);
-
-  function ReportCard({ r }: { r: Report }) {
-    const canModerate = r.author_id !== me?.userId;
-    return (
-      <Card>
-        <CardContent className="space-y-2 p-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="mr-auto font-medium">{r.title}</p>
-            <Badge variant={r.status === "validated" ? "default" : "secondary"}>{statusLabel[r.status]}</Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {name(r.author_id)} → {name(r.recipient_id)} ·{" "}
-            {new Date(r.created_at).toLocaleString("fr-FR")}
-          </p>
-          <p className="whitespace-pre-wrap text-sm">{r.content}</p>
-          {r.link && (
-            <a href={r.link} target="_blank" rel="noreferrer" className="text-sm text-primary underline">
-              Pièce jointe / lien
-            </a>
-          )}
-          <div className="space-y-1 border-t border-border pt-2">
-            {(comments.data ?? [])
-              .filter((c: { report_id: string }) => c.report_id === r.id)
-              .map((c: { id: string; author_id: string; content: string; link?: string | null }) => (
-                <p key={c.id} className="text-xs text-muted-foreground">
-                  <span className="text-foreground">{name(c.author_id)}</span> : {c.content}
-                  {c.link && (
-                    <>
-                      {" "}
-                      <a
-                        href={c.link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-400 underline"
-                      >
-                        lien Drive
-                      </a>
-                    </>
-                  )}
-                </p>
-              ))}
-          </div>
-          {canModerate && (
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <Button size="sm" variant="outline" onClick={() => setStatus.mutate({ id: r.id, status: "read" })}>
-                Marquer lu
-              </Button>
-              <Button size="sm" onClick={() => setStatus.mutate({ id: r.id, status: "validated" })}>
-                Valider
-              </Button>
-              <Input
-                className="w-56"
-                placeholder="Réponse"
-                value={comment[r.id] ?? ""}
-                onChange={(e) => setComment((c) => ({ ...c, [r.id]: e.target.value }))}
-              />
-              <Input
-                className="w-56"
-                type="url"
-                placeholder="Lien Google Drive (optionnel)"
-                value={commentLink[r.id] ?? ""}
-                onChange={(e) => setCommentLink((c) => ({ ...c, [r.id]: e.target.value }))}
-              />
-              <Button size="sm" variant="ghost" onClick={() => addComment.mutate(r.id)}>
-                Envoyer
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
+  const commentsOf = (id: string) => (comments.data ?? []).filter((c) => c.report_id === id);
 
   return (
     <AppLayout title="Rapports">
@@ -268,13 +308,29 @@ function ReportsPage() {
           <TabsContent value="received" className="space-y-3">
             {received.length === 0 && <p className="text-sm text-muted-foreground">Aucun rapport reçu.</p>}
             {received.map((r) => (
-              <ReportCard key={r.id} r={r} />
+              <ReportCard
+                key={r.id}
+                r={r}
+                canModerate
+                comments={commentsOf(r.id)}
+                name={name}
+                onStatus={(status) => setStatus.mutate({ id: r.id, status })}
+                onComment={(c, l) => addComment(r.id, c, l)}
+              />
             ))}
           </TabsContent>
           <TabsContent value="sent" className="space-y-3">
             {mine.length === 0 && <p className="text-sm text-muted-foreground">Aucun rapport envoyé.</p>}
             {mine.map((r) => (
-              <ReportCard key={r.id} r={r} />
+              <ReportCard
+                key={r.id}
+                r={r}
+                canModerate={false}
+                comments={commentsOf(r.id)}
+                name={name}
+                onStatus={(status) => setStatus.mutate({ id: r.id, status })}
+                onComment={(c, l) => addComment(r.id, c, l)}
+              />
             ))}
           </TabsContent>
         </Tabs>
