@@ -233,7 +233,12 @@ function SettingsPage() {
           <TabsTrigger value="accounting">Catégories comptables</TabsTrigger>
           <TabsTrigger value="messages">Messages & son</TabsTrigger>
           <TabsTrigger value="accounts">Comptes & mots de passe</TabsTrigger>
+          <TabsTrigger value="fields">Cases des fiches</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="fields" className="mt-4">
+          <FormFieldsSettings />
+        </TabsContent>
 
         <TabsContent value="positions" className="mt-4 grid gap-4 md:grid-cols-[320px_1fr]">
           <Card className="h-fit">
