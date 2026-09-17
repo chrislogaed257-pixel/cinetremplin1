@@ -17,6 +17,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import {
+  useFormFields,
+  ExtraFieldsInputs,
+  ExtraFieldsView,
+  type ExtraValues,
+} from "@/components/FormFields";
 
 export const Route = createFileRoute("/_authenticated/feuille-de-service")({
   component: CallSheetsPage,
@@ -32,6 +38,7 @@ type CallSheet = {
   crew: string;
   notes: string;
   created_at: string;
+  extra?: unknown;
 };
 
 const NONE = "none";
@@ -50,6 +57,8 @@ function CallSheetsPage() {
   const [place, setPlace] = useState("");
   const [crew, setCrew] = useState("");
   const [notes, setNotes] = useState("");
+  const [extra, setExtra] = useState<ExtraValues>({});
+  const { data: fields = [] } = useFormFields("feuille");
 
   const sheets = useQuery({
     queryKey: ["call_sheets"],
@@ -73,6 +82,7 @@ function CallSheetsPage() {
         location: place,
         crew,
         notes,
+        extra,
         created_by: org.myId,
       });
       if (error) throw error;
@@ -81,6 +91,7 @@ function CallSheetsPage() {
       setTitle("");
       setCrew("");
       setNotes("");
+      setExtra({});
       qc.invalidateQueries({ queryKey: ["call_sheets"] });
       toast.success("Feuille de service créée");
     },
@@ -148,6 +159,12 @@ function CallSheetsPage() {
                   <Label htmlFor="n">Notes</Label>
                   <Textarea id="n" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
                 </div>
+                <ExtraFieldsInputs
+                  fields={fields}
+                  values={extra}
+                  idPrefix="feuille"
+                  onChange={(k, v) => setExtra((prev) => ({ ...prev, [k]: v }))}
+                />
                 <Button type="submit" className="w-full" disabled={create.isPending}>
                   Créer
                 </Button>
@@ -167,7 +184,7 @@ function CallSheetsPage() {
             <Card key={s.id}>
               <CardContent className="space-y-1 p-4 text-sm">
                 <p className="font-medium">
-                  🎥 {s.title} — {new Date(s.service_date).toLocaleDateString("fr-FR")}
+                  {s.title} : {new Date(s.service_date).toLocaleDateString("fr-FR")}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {projectName(s.project_id)}
@@ -176,6 +193,7 @@ function CallSheetsPage() {
                 </p>
                 {s.crew && <p className="whitespace-pre-wrap">Équipe : {s.crew}</p>}
                 {s.notes && <p className="whitespace-pre-wrap text-muted-foreground">{s.notes}</p>}
+                <ExtraFieldsView fields={fields} values={s.extra} />
               </CardContent>
             </Card>
           ))}

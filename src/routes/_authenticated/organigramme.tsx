@@ -49,7 +49,7 @@ function OrgChartPage() {
                 <p className="text-xs text-muted-foreground">{profile.role_description}</p>
               )}
               {mine.length > 0 && (
-                <p className="text-[11px] text-muted-foreground">🎬 {mine.join(" · ")}</p>
+                <p className="text-[11px] text-muted-foreground">{mine.join(" · ")}</p>
               )}
             </CardContent>
           </Card>
