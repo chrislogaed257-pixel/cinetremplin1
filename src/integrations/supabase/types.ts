@@ -1784,6 +1784,35 @@ export type Database = {
         }
         Relationships: []
       }
+      vote_access_codes: {
+        Row: {
+          code: string
+          id: string
+          session_id: string
+          used: boolean
+        }
+        Insert: {
+          code: string
+          id?: string
+          session_id: string
+          used?: boolean
+        }
+        Update: {
+          code?: string
+          id?: string
+          session_id?: string
+          used?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_access_codes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "vote_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vote_ballots: {
         Row: {
           created_at: string
@@ -1830,33 +1859,119 @@ export type Database = {
           },
         ]
       }
+      vote_projects: {
+        Row: {
+          code: string
+          created_at: string
+          description: string
+          id: string
+          session_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string
+          id?: string
+          session_id: string
+          sort_order?: number
+          title?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string
+          id?: string
+          session_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_projects_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "vote_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vote_quotas: {
+        Row: {
+          id: string
+          session_id: string
+          used: number
+          voted_codes: string[]
+          voter_token: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          used?: number
+          voted_codes?: string[]
+          voter_token: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          used?: number
+          voted_codes?: string[]
+          voter_token?: string
+        }
+        Relationships: []
+      }
       vote_sessions: {
         Row: {
+          access_code: string
+          access_login: string
+          closed_at: string | null
           created_at: string
           created_by: string | null
           description: string
           id: string
+          individual_codes: boolean
+          live_results: boolean
           max_votes: number
+          opened_at: string | null
+          proclamation: string
+          require_distinct: boolean
           status: string
           title: string
           updated_at: string
         }
         Insert: {
+          access_code?: string
+          access_login?: string
+          closed_at?: string | null
           created_at?: string
           created_by?: string | null
           description?: string
           id?: string
+          individual_codes?: boolean
+          live_results?: boolean
           max_votes?: number
+          opened_at?: string | null
+          proclamation?: string
+          require_distinct?: boolean
           status?: string
           title: string
           updated_at?: string
         }
         Update: {
+          access_code?: string
+          access_login?: string
+          closed_at?: string | null
           created_at?: string
           created_by?: string | null
           description?: string
           id?: string
+          individual_codes?: boolean
+          live_results?: boolean
           max_votes?: number
+          opened_at?: string | null
+          proclamation?: string
+          require_distinct?: boolean
           status?: string
           title?: string
           updated_at?: string
@@ -1870,6 +1985,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      vote_tallies: {
+        Row: {
+          id: string
+          project_code: string
+          session_id: string
+        }
+        Insert: {
+          id?: string
+          project_code: string
+          session_id: string
+        }
+        Update: {
+          id?: string
+          project_code?: string
+          session_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
