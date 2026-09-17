@@ -43,30 +43,182 @@ export type Database = {
           },
         ]
       }
-      profiles: {
+      position_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      positions: {
+        Row: {
+          active: boolean
+          category_id: string | null
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "positions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "position_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_managers: {
         Row: {
           created_at: string
-          email: string
-          full_name: string
           id: string
-          manager_id: string | null
-          position: string
+          manager_id: string
+          profile_id: string
         }
         Insert: {
           created_at?: string
-          email: string
-          full_name: string
-          id: string
-          manager_id?: string | null
-          position?: string
+          id?: string
+          manager_id: string
+          profile_id: string
         }
         Update: {
           created_at?: string
+          id?: string
+          manager_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_managers_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_managers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_positions: {
+        Row: {
+          created_at: string
+          id: string
+          position_id: string
+          profile_id: string
+          rank_label: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position_id: string
+          profile_id: string
+          rank_label?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position_id?: string
+          profile_id?: string
+          rank_label?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_positions_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_positions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          active: boolean
+          created_at: string
+          dislikes: string
+          email: string
+          full_name: string
+          id: string
+          likes: string
+          manager_id: string | null
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          dislikes?: string
+          email: string
+          full_name: string
+          id: string
+          likes?: string
+          manager_id?: string | null
+          position?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          dislikes?: string
           email?: string
           full_name?: string
           id?: string
+          likes?: string
           manager_id?: string | null
           position?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -271,6 +423,10 @@ export type Database = {
         Args: { _target: string; _viewer: string }
         Returns: boolean
       }
+      has_position: {
+        Args: { _position: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -284,7 +440,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "member"
+      app_role: "admin" | "member" | "mentor" | "funder"
       report_status: "sent" | "read" | "validated"
       task_status: "todo" | "doing" | "done"
     }
@@ -414,7 +570,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "member"],
+      app_role: ["admin", "member", "mentor", "funder"],
       report_status: ["sent", "read", "validated"],
       task_status: ["todo", "doing", "done"],
     },
