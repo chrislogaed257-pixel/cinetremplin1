@@ -26,6 +26,23 @@ function MentorPage() {
     },
   });
 
+  const feedback = useQuery({
+    queryKey: ["mentor_feedback"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("mentor_feedback")
+        .select("id, mentor_name, content, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as {
+        id: string;
+        mentor_name: string;
+        content: string;
+        created_at: string;
+      }[];
+    },
+  });
+
   return (
     <AppLayout title="Espace mentor">
       <div className="space-y-4">
@@ -46,6 +63,24 @@ function MentorPage() {
             </CardContent>
           </Card>
         ))}
+
+        <div className="space-y-2">
+          <p className="text-sm font-medium">Retours des mentors externes (accès libre)</p>
+          {(feedback.data ?? []).length === 0 && (
+            <p className="text-sm text-muted-foreground">Aucun retour pour le moment.</p>
+          )}
+          {(feedback.data ?? []).map((f) => (
+            <Card key={f.id}>
+              <CardContent className="space-y-1 p-4">
+                <p className="text-sm font-medium">{f.mentor_name}</p>
+                <p className="text-sm text-muted-foreground">{f.content}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(f.created_at).toLocaleString("fr-FR")}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
         <div>
           <p className="mb-2 text-sm font-medium">

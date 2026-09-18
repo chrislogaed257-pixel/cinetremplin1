@@ -61,3 +61,18 @@ export const acceptMentorInvite = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
+/**
+ * Projets présentés aux mentors externes en accès libre.
+ * Aucun identifiant n'est requis : seules les informations publiques du projet sortent.
+ */
+export const mentorProjects = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+  const { data } = await db
+    .from("projects")
+    .select("id, title, description, status")
+    .order("created_at", { ascending: false });
+  return {
+    projects: (data ?? []) as { id: string; title: string; description: string; status: string }[],
+  };
+});
