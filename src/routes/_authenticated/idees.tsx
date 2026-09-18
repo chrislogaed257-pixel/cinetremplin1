@@ -7,6 +7,9 @@ import { useOrgContext } from "@/hooks/useOrg";
 import { Chat, useConversation } from "@/components/Chat";
 import { ProjectPhaseControl } from "@/components/ProjectPhase";
 import { getIdeaFileLink } from "@/lib/ideas.functions";
+import { createProject, deleteProject } from "@/lib/projects.functions";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +49,21 @@ type Project = {
   idea_id: string | null;
   phase_id: string | null;
   state: string;
+  synopsis?: string;
+  synopsis_link?: string;
+  script_title?: string;
+  script_link?: string;
+  budget_title?: string;
+  budget_link?: string;
 };
+
+const PROJECT_MANAGERS = [
+  "Producteur général",
+  "Producteur délégué",
+  "Scénariste",
+  "Réalisateur",
+  "Comptable / Trésorier",
+];
 
 const VOTING_POSITIONS = ["Producteur général", "Producteur délégué", "Scénariste"];
 
