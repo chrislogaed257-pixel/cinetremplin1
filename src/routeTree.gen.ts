@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IdeesSoumissionRouteImport } from './routes/idees-soumission'
+import { Route as MentorEspaceRouteImport } from './routes/mentor-espace'
 import { Route as MentorInvitationRouteImport } from './routes/mentor-invitation'
 import { Route as MotDePasseOublieRouteImport } from './routes/mot-de-passe-oublie'
 import { Route as VoteAccesRouteImport } from './routes/vote-acces'
@@ -61,6 +62,11 @@ const AuthRoute = AuthRouteImport.update({
 const IdeesSoumissionRoute = IdeesSoumissionRouteImport.update({
   id: '/idees-soumission',
   path: '/idees-soumission',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentorEspaceRoute = MentorEspaceRouteImport.update({
+  id: '/mentor-espace',
+  path: '/mentor-espace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentorInvitationRoute = MentorInvitationRouteImport.update({
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/idees-soumission': typeof IdeesSoumissionRoute
+  '/mentor-espace': typeof MentorEspaceRoute
   '/mentor-invitation': typeof MentorInvitationRoute
   '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/vote-acces': typeof VoteAccesRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/idees-soumission': typeof IdeesSoumissionRoute
+  '/mentor-espace': typeof MentorEspaceRoute
   '/mentor-invitation': typeof MentorInvitationRoute
   '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/vote-acces': typeof VoteAccesRoute
@@ -295,6 +303,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/idees-soumission': typeof IdeesSoumissionRoute
+  '/mentor-espace': typeof MentorEspaceRoute
   '/mentor-invitation': typeof MentorInvitationRoute
   '/mot-de-passe-oublie': typeof MotDePasseOublieRoute
   '/vote-acces': typeof VoteAccesRoute
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/idees-soumission'
+    | '/mentor-espace'
     | '/mentor-invitation'
     | '/mot-de-passe-oublie'
     | '/vote-acces'
@@ -367,6 +377,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/idees-soumission'
+    | '/mentor-espace'
     | '/mentor-invitation'
     | '/mot-de-passe-oublie'
     | '/vote-acces'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/idees-soumission'
+    | '/mentor-espace'
     | '/mentor-invitation'
     | '/mot-de-passe-oublie'
     | '/vote-acces'
@@ -440,6 +452,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   IdeesSoumissionRoute: typeof IdeesSoumissionRoute
+  MentorEspaceRoute: typeof MentorEspaceRoute
   MentorInvitationRoute: typeof MentorInvitationRoute
   MotDePasseOublieRoute: typeof MotDePasseOublieRoute
   VoteAccesRoute: typeof VoteAccesRoute
@@ -474,6 +487,13 @@ declare module '@tanstack/react-router' {
       path: '/idees-soumission'
       fullPath: '/idees-soumission'
       preLoaderRoute: typeof IdeesSoumissionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentor-espace': {
+      id: '/mentor-espace'
+      path: '/mentor-espace'
+      fullPath: '/mentor-espace'
+      preLoaderRoute: typeof MentorEspaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentor-invitation': {
@@ -755,6 +775,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   IdeesSoumissionRoute: IdeesSoumissionRoute,
+  MentorEspaceRoute: MentorEspaceRoute,
   MentorInvitationRoute: MentorInvitationRoute,
   MotDePasseOublieRoute: MotDePasseOublieRoute,
   VoteAccesRoute: VoteAccesRoute,
