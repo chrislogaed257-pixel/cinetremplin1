@@ -134,3 +134,5 @@
 - [x] Formulaire de casting public complet + fiche candidat détaillée côté direction
 - [x] Cases personnalisables branchées (Contrats, Feuille de service, Casting) + onglet Cases des fiches
 - [x] Tests navigateur : rapports (saisie continue), congés, équipes, dashboard, vote, casting
+
+- [x] Réunions vidéo : lien Google Meet, accès libre par jeton public (/reunion/$token)

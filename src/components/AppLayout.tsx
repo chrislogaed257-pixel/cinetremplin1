@@ -39,6 +39,7 @@ import {
   Sun,
   Theater,
   Users,
+  Video,
   Vote,
 } from "lucide-react";
 
@@ -87,6 +88,7 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
     { to: "/ressources", label: "Liens & documents", Icon: Link2 },
     { to: "/discussion", label: "Discussions", Icon: MessagesSquare },
     { to: "/messagerie", label: "Messagerie", Icon: Mail },
+    { to: "/reunions", label: "Réunions vidéo", Icon: Video },
   ];
   if (org.canSeeIdeas) {
     nav.push({ to: "/idees", label: "Idées & projets", Icon: Lightbulb });
