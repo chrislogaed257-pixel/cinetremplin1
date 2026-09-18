@@ -554,3 +554,114 @@ function LoglineEditor({ projectId, canEdit }: { projectId: string; canEdit: boo
     </div>
   );
 }
+
+/** Création d'un projet par la production : le projet part aussi en approbation. */
+function ProjectCreator() {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState({
+    title: "",
+    logline: "",
+    description: "",
+    synopsis: "",
+    synopsisLink: "",
+    scriptTitle: "",
+    scriptLink: "",
+    budgetTitle: "",
+    budgetLink: "",
+  });
+  const set = (k: keyof typeof f) => (v: string) => setF((p) => ({ ...p, [k]: v }));
+
+  const save = useMutation({
+    mutationFn: () => createProject({ data: f }),
+    onSuccess: () => {
+      setF({
+        title: "",
+        logline: "",
+        description: "",
+        synopsis: "",
+        synopsisLink: "",
+        scriptTitle: "",
+        scriptLink: "",
+        budgetTitle: "",
+        budgetLink: "",
+      });
+      setOpen(false);
+      qc.invalidateQueries({ queryKey: ["projects"] });
+      qc.invalidateQueries({ queryKey: ["ideas"] });
+      toast.success("Projet créé et envoyé en approbation");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!open)
+    return (
+      <Button size="sm" onClick={() => setOpen(true)}>
+        Créer un projet
+      </Button>
+    );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm">Nouveau projet</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            save.mutate();
+          }}
+        >
+          <div className="space-y-1.5">
+            <Label htmlFor="pt">Titre du projet</Label>
+            <Input id="pt" value={f.title} onChange={(e) => set("title")(e.target.value)} required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pl">Logline</Label>
+            <Textarea id="pl" rows={2} value={f.logline} onChange={(e) => set("logline")(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pd">Présentation courte</Label>
+            <Textarea id="pd" rows={3} value={f.description} onChange={(e) => set("description")(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="ps">Synopsis</Label>
+            <Textarea id="ps" rows={4} value={f.synopsis} onChange={(e) => set("synopsis")(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="psl">Lien Google Drive du synopsis</Label>
+            <Input id="psl" value={f.synopsisLink} onChange={(e) => set("synopsisLink")(e.target.value)} placeholder="https://drive.google.com/..." />
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="pst">Titre du scénario</Label>
+              <Input id="pst" value={f.scriptTitle} onChange={(e) => set("scriptTitle")(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="psk">Lien Google Drive du scénario</Label>
+              <Input id="psk" value={f.scriptLink} onChange={(e) => set("scriptLink")(e.target.value)} placeholder="https://drive.google.com/..." />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="pbt">Titre du budget</Label>
+              <Input id="pbt" value={f.budgetTitle} onChange={(e) => set("budgetTitle")(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="pbl">Lien Google Drive du budget</Label>
+              <Input id="pbl" value={f.budgetLink} onChange={(e) => set("budgetLink")(e.target.value)} placeholder="https://drive.google.com/..." />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button type="submit" size="sm" disabled={save.isPending}>
+              {save.isPending ? "Enregistrement..." : "Enregistrer le projet"}
+            </Button>
+            <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>
+              Annuler
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
