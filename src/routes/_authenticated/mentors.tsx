@@ -78,6 +78,8 @@ function MentorsPage() {
 
   const link =
     typeof window !== "undefined" ? `${window.location.origin}/mentor-invitation` : "/mentor-invitation";
+  const openLink =
+    typeof window !== "undefined" ? `${window.location.origin}/mentor-espace` : "/mentor-espace";
 
   return (
     <AppLayout title="Mentors externes">
@@ -113,6 +115,20 @@ function MentorsPage() {
               </Button>
               <p className="text-xs text-muted-foreground">
                 Transmettez au mentor le lien <code>{link}</code> et son code.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  void navigator.clipboard.writeText(openLink);
+                  toast.success("Lien d'accès libre copié");
+                }}
+              >
+                Copier le lien mentor en accès libre
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Accès libre : <code>{openLink}</code> ouvre l'espace mentor sans compte ni code.
               </p>
             </form>
           </CardContent>
