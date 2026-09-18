@@ -206,6 +206,24 @@ function IdeasPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const canManageProjects =
+    org.isAdmin || PROJECT_MANAGERS.some((p) => org.myBasePositions.includes(p));
+
+  const remove = useMutation({
+    mutationFn: async (projectId: string) => {
+      if (!window.confirm("Supprimer définitivement ce projet ?")) throw new Error("Annulé");
+      await deleteProject({ data: { projectId } });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Projet supprimé");
+    },
+    onError: (e: Error) => {
+      if (e.message !== "Annulé") toast.error(e.message);
+    },
+  });
+
+
   async function openFile(ideaId: string) {
     try {
       const { url } = await getIdeaFileLink({ data: { ideaId } });
