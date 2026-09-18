@@ -364,6 +364,7 @@ function IdeasPage() {
         </TabsContent>
 
         <TabsContent value="projects" className="mt-4 space-y-4">
+          {canManageProjects && <ProjectCreator />}
           {(projects.data ?? []).length === 0 && (
             <p className="text-sm text-muted-foreground">Aucun projet approuvé.</p>
           )}
@@ -373,7 +374,7 @@ function IdeasPage() {
                 <div className="flex flex-wrap items-start gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">
-                      <span className="mr-2 text-primary">🎬 {roman(i + 1)}</span>
+                      <span className="mr-2 text-primary">{roman(i + 1)}</span>
                       {p.title}
                     </p>
                     <p className="text-sm text-muted-foreground">{p.description}</p>
@@ -386,7 +387,39 @@ function IdeasPage() {
                   >
                     {openProject === p.id ? "Fermer" : "Discussion du projet"}
                   </Button>
+                  {canManageProjects && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => remove.mutate(p.id)}
+                      disabled={remove.isPending}
+                    >
+                      Supprimer
+                    </Button>
+                  )}
                 </div>
+                {(p.synopsis || p.synopsis_link || p.script_link || p.budget_link) && (
+                  <div className="space-y-1 rounded border border-border p-3 text-sm">
+                    {p.synopsis && <p className="whitespace-pre-wrap">{p.synopsis}</p>}
+                    <div className="flex flex-wrap gap-3 text-xs">
+                      {p.synopsis_link && (
+                        <a className="underline" href={p.synopsis_link} target="_blank" rel="noreferrer">
+                          Document du synopsis
+                        </a>
+                      )}
+                      {p.script_link && (
+                        <a className="underline" href={p.script_link} target="_blank" rel="noreferrer">
+                          Scénario{p.script_title ? ` : ${p.script_title}` : ""}
+                        </a>
+                      )}
+                      {p.budget_link && (
+                        <a className="underline" href={p.budget_link} target="_blank" rel="noreferrer">
+                          Budget{p.budget_title ? ` : ${p.budget_title}` : ""}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <LoglineEditor projectId={p.id} canEdit={org.isAdmin || org.isDeputy} />
                 <ProjectPhaseControl
                   projectId={p.id}
@@ -398,6 +431,7 @@ function IdeasPage() {
             </Card>
           ))}
         </TabsContent>
+
 
         <TabsContent value="refused" className="mt-4 space-y-4">
           <p className="text-xs text-muted-foreground">
