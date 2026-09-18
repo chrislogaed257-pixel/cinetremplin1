@@ -845,46 +845,90 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          directing_note: string
           drive_link: string | null
+          experience_level: string
           file_url: string | null
           id: string
+          intention_note: string
+          logline: string
+          origin: string
+          presentation: string
+          project_id: string | null
+          project_title: string
           responded: boolean
           responded_at: string | null
           response_note: string | null
+          script_text: string
           status: string
           submitter_email: string
+          submitter_job: string
           submitter_name: string
+          synopsis: string
+          treatment: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           description: string
+          directing_note?: string
           drive_link?: string | null
+          experience_level?: string
           file_url?: string | null
           id?: string
+          intention_note?: string
+          logline?: string
+          origin?: string
+          presentation?: string
+          project_id?: string | null
+          project_title?: string
           responded?: boolean
           responded_at?: string | null
           response_note?: string | null
+          script_text?: string
           status?: string
           submitter_email: string
+          submitter_job?: string
           submitter_name: string
+          synopsis?: string
+          treatment?: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           description?: string
+          directing_note?: string
           drive_link?: string | null
+          experience_level?: string
           file_url?: string | null
           id?: string
+          intention_note?: string
+          logline?: string
+          origin?: string
+          presentation?: string
+          project_id?: string | null
+          project_title?: string
           responded?: boolean
           responded_at?: string | null
           response_note?: string | null
+          script_text?: string
           status?: string
           submitter_email?: string
+          submitter_job?: string
           submitter_name?: string
+          synopsis?: string
+          treatment?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ideas_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leave_decisions: {
         Row: {
@@ -1061,6 +1105,8 @@ export type Database = {
           email: string
           full_name: string
           id: string
+          public_token: string | null
+          status: string
           used_at: string | null
         }
         Insert: {
@@ -1070,6 +1116,8 @@ export type Database = {
           email: string
           full_name?: string
           id?: string
+          public_token?: string | null
+          status?: string
           used_at?: string | null
         }
         Update: {
@@ -1079,6 +1127,8 @@ export type Database = {
           email?: string
           full_name?: string
           id?: string
+          public_token?: string | null
+          status?: string
           used_at?: string | null
         }
         Relationships: [
@@ -1087,6 +1137,48 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentor_messages: {
+        Row: {
+          author_id: string | null
+          content: string
+          created_at: string
+          from_mentor: boolean
+          id: string
+          invite_id: string
+        }
+        Insert: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          from_mentor?: boolean
+          id?: string
+          invite_id: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          from_mentor?: boolean
+          id?: string
+          invite_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentor_messages_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mentor_messages_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "mentor_invites"
             referencedColumns: ["id"]
           },
         ]
@@ -1673,42 +1765,70 @@ export type Database = {
       }
       projects: {
         Row: {
+          budget_link: string
+          budget_title: string
           created_at: string
+          created_by: string | null
           description: string
           id: string
           idea_id: string | null
           logline: string
           phase_id: string | null
+          script_link: string
+          script_title: string
           state: string
           status: string
+          synopsis: string
+          synopsis_link: string
           title: string
           updated_at: string
         }
         Insert: {
+          budget_link?: string
+          budget_title?: string
           created_at?: string
+          created_by?: string | null
           description?: string
           id?: string
           idea_id?: string | null
           logline?: string
           phase_id?: string | null
+          script_link?: string
+          script_title?: string
           state?: string
           status?: string
+          synopsis?: string
+          synopsis_link?: string
           title: string
           updated_at?: string
         }
         Update: {
+          budget_link?: string
+          budget_title?: string
           created_at?: string
+          created_by?: string | null
           description?: string
           id?: string
           idea_id?: string | null
           logline?: string
           phase_id?: string | null
+          script_link?: string
+          script_title?: string
           state?: string
           status?: string
+          synopsis?: string
+          synopsis_link?: string
           title?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "projects_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "projects_idea_id_fkey"
             columns: ["idea_id"]

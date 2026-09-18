@@ -7,6 +7,9 @@ import { useOrgContext } from "@/hooks/useOrg";
 import { Chat, useConversation } from "@/components/Chat";
 import { ProjectPhaseControl } from "@/components/ProjectPhase";
 import { getIdeaFileLink } from "@/lib/ideas.functions";
+import { createProject, deleteProject } from "@/lib/projects.functions";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +49,21 @@ type Project = {
   idea_id: string | null;
   phase_id: string | null;
   state: string;
+  synopsis?: string;
+  synopsis_link?: string;
+  script_title?: string;
+  script_link?: string;
+  budget_title?: string;
+  budget_link?: string;
 };
+
+const PROJECT_MANAGERS = [
+  "Producteur général",
+  "Producteur délégué",
+  "Scénariste",
+  "Réalisateur",
+  "Comptable / Trésorier",
+];
 
 const VOTING_POSITIONS = ["Producteur général", "Producteur délégué", "Scénariste"];
 
@@ -188,6 +205,24 @@ function IdeasPage() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const canManageProjects =
+    org.isAdmin || PROJECT_MANAGERS.some((p) => org.myBasePositions.includes(p));
+
+  const remove = useMutation({
+    mutationFn: async (projectId: string) => {
+      if (!window.confirm("Supprimer définitivement ce projet ?")) throw new Error("Annulé");
+      await deleteProject({ data: { projectId } });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Projet supprimé");
+    },
+    onError: (e: Error) => {
+      if (e.message !== "Annulé") toast.error(e.message);
+    },
+  });
+
 
   async function openFile(ideaId: string) {
     try {
@@ -347,6 +382,7 @@ function IdeasPage() {
         </TabsContent>
 
         <TabsContent value="projects" className="mt-4 space-y-4">
+          {canManageProjects && <ProjectCreator />}
           {(projects.data ?? []).length === 0 && (
             <p className="text-sm text-muted-foreground">Aucun projet approuvé.</p>
           )}
@@ -356,7 +392,7 @@ function IdeasPage() {
                 <div className="flex flex-wrap items-start gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">
-                      <span className="mr-2 text-primary">🎬 {roman(i + 1)}</span>
+                      <span className="mr-2 text-primary">{roman(i + 1)}</span>
                       {p.title}
                     </p>
                     <p className="text-sm text-muted-foreground">{p.description}</p>
@@ -369,7 +405,39 @@ function IdeasPage() {
                   >
                     {openProject === p.id ? "Fermer" : "Discussion du projet"}
                   </Button>
+                  {canManageProjects && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => remove.mutate(p.id)}
+                      disabled={remove.isPending}
+                    >
+                      Supprimer
+                    </Button>
+                  )}
                 </div>
+                {(p.synopsis || p.synopsis_link || p.script_link || p.budget_link) && (
+                  <div className="space-y-1 rounded border border-border p-3 text-sm">
+                    {p.synopsis && <p className="whitespace-pre-wrap">{p.synopsis}</p>}
+                    <div className="flex flex-wrap gap-3 text-xs">
+                      {p.synopsis_link && (
+                        <a className="underline" href={p.synopsis_link} target="_blank" rel="noreferrer">
+                          Document du synopsis
+                        </a>
+                      )}
+                      {p.script_link && (
+                        <a className="underline" href={p.script_link} target="_blank" rel="noreferrer">
+                          Scénario{p.script_title ? ` : ${p.script_title}` : ""}
+                        </a>
+                      )}
+                      {p.budget_link && (
+                        <a className="underline" href={p.budget_link} target="_blank" rel="noreferrer">
+                          Budget{p.budget_title ? ` : ${p.budget_title}` : ""}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <LoglineEditor projectId={p.id} canEdit={org.isAdmin || org.isDeputy} />
                 <ProjectPhaseControl
                   projectId={p.id}
@@ -381,6 +449,7 @@ function IdeasPage() {
             </Card>
           ))}
         </TabsContent>
+
 
         <TabsContent value="refused" className="mt-4 space-y-4">
           <p className="text-xs text-muted-foreground">
@@ -483,5 +552,116 @@ function LoglineEditor({ projectId, canEdit }: { projectId: string; canEdit: boo
         </div>
       )}
     </div>
+  );
+}
+
+/** Création d'un projet par la production : le projet part aussi en approbation. */
+function ProjectCreator() {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState({
+    title: "",
+    logline: "",
+    description: "",
+    synopsis: "",
+    synopsisLink: "",
+    scriptTitle: "",
+    scriptLink: "",
+    budgetTitle: "",
+    budgetLink: "",
+  });
+  const set = (k: keyof typeof f) => (v: string) => setF((p) => ({ ...p, [k]: v }));
+
+  const save = useMutation({
+    mutationFn: () => createProject({ data: f }),
+    onSuccess: () => {
+      setF({
+        title: "",
+        logline: "",
+        description: "",
+        synopsis: "",
+        synopsisLink: "",
+        scriptTitle: "",
+        scriptLink: "",
+        budgetTitle: "",
+        budgetLink: "",
+      });
+      setOpen(false);
+      qc.invalidateQueries({ queryKey: ["projects"] });
+      qc.invalidateQueries({ queryKey: ["ideas"] });
+      toast.success("Projet créé et envoyé en approbation");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!open)
+    return (
+      <Button size="sm" onClick={() => setOpen(true)}>
+        Créer un projet
+      </Button>
+    );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm">Nouveau projet</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            save.mutate();
+          }}
+        >
+          <div className="space-y-1.5">
+            <Label htmlFor="pt">Titre du projet</Label>
+            <Input id="pt" value={f.title} onChange={(e) => set("title")(e.target.value)} required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pl">Logline</Label>
+            <Textarea id="pl" rows={2} value={f.logline} onChange={(e) => set("logline")(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pd">Présentation courte</Label>
+            <Textarea id="pd" rows={3} value={f.description} onChange={(e) => set("description")(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="ps">Synopsis</Label>
+            <Textarea id="ps" rows={4} value={f.synopsis} onChange={(e) => set("synopsis")(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="psl">Lien Google Drive du synopsis</Label>
+            <Input id="psl" value={f.synopsisLink} onChange={(e) => set("synopsisLink")(e.target.value)} placeholder="https://drive.google.com/..." />
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="pst">Titre du scénario</Label>
+              <Input id="pst" value={f.scriptTitle} onChange={(e) => set("scriptTitle")(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="psk">Lien Google Drive du scénario</Label>
+              <Input id="psk" value={f.scriptLink} onChange={(e) => set("scriptLink")(e.target.value)} placeholder="https://drive.google.com/..." />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="pbt">Titre du budget</Label>
+              <Input id="pbt" value={f.budgetTitle} onChange={(e) => set("budgetTitle")(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="pbl">Lien Google Drive du budget</Label>
+              <Input id="pbl" value={f.budgetLink} onChange={(e) => set("budgetLink")(e.target.value)} placeholder="https://drive.google.com/..." />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button type="submit" size="sm" disabled={save.isPending}>
+              {save.isPending ? "Enregistrement..." : "Enregistrer le projet"}
+            </Button>
+            <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>
+              Annuler
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

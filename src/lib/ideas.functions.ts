@@ -99,3 +99,90 @@ export const getIdeaFileLink = createServerFn({ method: "POST" })
     if (sErr) throw new Error(sErr.message);
     return { url: signed.signedUrl };
   });
+
+type FullSubmission = {
+  name: string;
+  email: string;
+  job: string;
+  experience: string;
+  projectTitle: string;
+  presentation: string;
+  logline: string;
+  synopsis: string;
+  scriptText: string;
+  treatment?: string | undefined;
+  intentionNote: string;
+  directingNote?: string | undefined;
+  driveLink?: string | undefined;
+};
+
+/**
+ * Dossier complet déposé en accès libre (aucun compte, aucun identifiant).
+ * Obligatoires : titre, présentation, logline, synopsis, scénario et note d'intention,
+ * chacun pouvant être remplacé par un lien Google Drive.
+ */
+export const submitIdeaFull = createServerFn({ method: "POST" })
+  .inputValidator((d: FullSubmission) => d)
+  .handler(async ({ data }) => {
+    const name = data.name?.trim();
+    const email = data.email?.trim();
+    const title = data.projectTitle?.trim();
+    const link = data.driveLink?.trim();
+    if (!name || !email) throw new Error("Nom et email sont requis.");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error("Adresse email invalide.");
+    if (!title) throw new Error("Le titre du projet est obligatoire.");
+    const need = (value: string | undefined, label: string) => {
+      if (!value?.trim() && !link) throw new Error(`${label} : écrivez le texte ou ajoutez un lien Google Drive.`);
+    };
+    need(data.presentation, "Votre présentation");
+    need(data.logline, "La logline");
+    need(data.synopsis, "Le synopsis");
+    need(data.scriptText, "Le scénario");
+    need(data.intentionNote, "La note d'intention");
+
+    const db = await admin();
+    const description = [
+      data.presentation?.trim(),
+      data.logline?.trim() ? `Logline : ${data.logline.trim()}` : "",
+      data.synopsis?.trim() ? `Synopsis : ${data.synopsis.trim()}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    const { data: idea, error } = await db
+      .from("ideas")
+      .insert({
+        submitter_name: name,
+        submitter_email: email,
+        description: description || title,
+        project_title: title,
+        presentation: data.presentation?.trim() ?? "",
+        submitter_job: data.job?.trim() ?? "",
+        experience_level: data.experience?.trim() ?? "",
+        logline: data.logline?.trim() ?? "",
+        synopsis: data.synopsis?.trim() ?? "",
+        treatment: data.treatment?.trim() ?? "",
+        intention_note: data.intentionNote?.trim() ?? "",
+        directing_note: data.directingNote?.trim() ?? "",
+        script_text: data.scriptText?.trim() ?? "",
+        drive_link: link || null,
+        origin: "externe",
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+
+    const { notifyReviewers } = await import("@/lib/projects.functions");
+    await notifyReviewers(
+      db,
+      "Nouveau dossier de projet reçu",
+      `${name} a déposé le projet : ${title}`,
+    );
+
+    return {
+      ok: true,
+      id: idea.id,
+      message:
+        "Merci du fond du coeur pour la confiance que vous accordez au Club Ciné Tremplin. Votre dossier est bien arrivé entre les mains de la production : il sera lu avec attention et vous recevrez une réponse par email.",
+    };
+  });
