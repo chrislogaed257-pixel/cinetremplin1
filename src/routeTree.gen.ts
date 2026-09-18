@@ -40,9 +40,11 @@ import { Route as AuthenticatedMotDePasseRouteImport } from './routes/_authentic
 import { Route as AuthenticatedOrganigrammeRouteImport } from './routes/_authenticated/organigramme'
 import { Route as AuthenticatedRapportsRouteImport } from './routes/_authenticated/rapports'
 import { Route as AuthenticatedRessourcesRouteImport } from './routes/_authenticated/ressources'
+import { Route as AuthenticatedReunionsRouteImport } from './routes/_authenticated/reunions'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
 import { Route as AuthenticatedVoteRouteImport } from './routes/_authenticated/vote'
 import { Route as CastingSoumissionTokenRouteImport } from './routes/casting-soumission.$token'
+import { Route as ReunionTokenRouteImport } from './routes/reunion.$token'
 import { Route as AuthenticatedProfilIdRouteImport } from './routes/_authenticated/profil.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -204,6 +206,11 @@ const AuthenticatedRessourcesRoute = AuthenticatedRessourcesRouteImport.update({
   path: '/ressources',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReunionsRoute = AuthenticatedReunionsRouteImport.update({
+  id: '/reunions',
+  path: '/reunions',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTachesRoute = AuthenticatedTachesRouteImport.update({
   id: '/taches',
   path: '/taches',
@@ -217,6 +224,11 @@ const AuthenticatedVoteRoute = AuthenticatedVoteRouteImport.update({
 const CastingSoumissionTokenRoute = CastingSoumissionTokenRouteImport.update({
   id: '/casting-soumission/$token',
   path: '/casting-soumission/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReunionTokenRoute = ReunionTokenRouteImport.update({
+  id: '/reunion/$token',
+  path: '/reunion/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedProfilIdRoute = AuthenticatedProfilIdRouteImport.update({
@@ -256,9 +268,11 @@ export interface FileRoutesByFullPath {
   '/organigramme': typeof AuthenticatedOrganigrammeRoute
   '/rapports': typeof AuthenticatedRapportsRoute
   '/ressources': typeof AuthenticatedRessourcesRoute
+  '/reunions': typeof AuthenticatedReunionsRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/vote': typeof AuthenticatedVoteRoute
   '/casting-soumission/$token': typeof CastingSoumissionTokenRoute
+  '/reunion/$token': typeof ReunionTokenRoute
   '/profil/$id': typeof AuthenticatedProfilIdRoute
 }
 export interface FileRoutesByTo {
@@ -292,9 +306,11 @@ export interface FileRoutesByTo {
   '/organigramme': typeof AuthenticatedOrganigrammeRoute
   '/rapports': typeof AuthenticatedRapportsRoute
   '/ressources': typeof AuthenticatedRessourcesRoute
+  '/reunions': typeof AuthenticatedReunionsRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/vote': typeof AuthenticatedVoteRoute
   '/casting-soumission/$token': typeof CastingSoumissionTokenRoute
+  '/reunion/$token': typeof ReunionTokenRoute
   '/profil/$id': typeof AuthenticatedProfilIdRoute
 }
 export interface FileRoutesById {
@@ -330,9 +346,11 @@ export interface FileRoutesById {
   '/_authenticated/organigramme': typeof AuthenticatedOrganigrammeRoute
   '/_authenticated/rapports': typeof AuthenticatedRapportsRoute
   '/_authenticated/ressources': typeof AuthenticatedRessourcesRoute
+  '/_authenticated/reunions': typeof AuthenticatedReunionsRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/vote': typeof AuthenticatedVoteRoute
   '/casting-soumission/$token': typeof CastingSoumissionTokenRoute
+  '/reunion/$token': typeof ReunionTokenRoute
   '/_authenticated/profil/$id': typeof AuthenticatedProfilIdRoute
 }
 export interface FileRouteTypes {
@@ -368,9 +386,11 @@ export interface FileRouteTypes {
     | '/organigramme'
     | '/rapports'
     | '/ressources'
+    | '/reunions'
     | '/taches'
     | '/vote'
     | '/casting-soumission/$token'
+    | '/reunion/$token'
     | '/profil/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -404,9 +424,11 @@ export interface FileRouteTypes {
     | '/organigramme'
     | '/rapports'
     | '/ressources'
+    | '/reunions'
     | '/taches'
     | '/vote'
     | '/casting-soumission/$token'
+    | '/reunion/$token'
     | '/profil/$id'
   id:
     | '__root__'
@@ -441,9 +463,11 @@ export interface FileRouteTypes {
     | '/_authenticated/organigramme'
     | '/_authenticated/rapports'
     | '/_authenticated/ressources'
+    | '/_authenticated/reunions'
     | '/_authenticated/taches'
     | '/_authenticated/vote'
     | '/casting-soumission/$token'
+    | '/reunion/$token'
     | '/_authenticated/profil/$id'
   fileRoutesById: FileRoutesById
 }
@@ -457,6 +481,7 @@ export interface RootRouteChildren {
   MotDePasseOublieRoute: typeof MotDePasseOublieRoute
   VoteAccesRoute: typeof VoteAccesRoute
   CastingSoumissionTokenRoute: typeof CastingSoumissionTokenRoute
+  ReunionTokenRoute: typeof ReunionTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -678,6 +703,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRessourcesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reunions': {
+      id: '/_authenticated/reunions'
+      path: '/reunions'
+      fullPath: '/reunions'
+      preLoaderRoute: typeof AuthenticatedReunionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/taches': {
       id: '/_authenticated/taches'
       path: '/taches'
@@ -697,6 +729,13 @@ declare module '@tanstack/react-router' {
       path: '/casting-soumission/$token'
       fullPath: '/casting-soumission/$token'
       preLoaderRoute: typeof CastingSoumissionTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reunion/$token': {
+      id: '/reunion/$token'
+      path: '/reunion/$token'
+      fullPath: '/reunion/$token'
+      preLoaderRoute: typeof ReunionTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/profil/$id': {
@@ -733,6 +772,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOrganigrammeRoute: typeof AuthenticatedOrganigrammeRoute
   AuthenticatedRapportsRoute: typeof AuthenticatedRapportsRoute
   AuthenticatedRessourcesRoute: typeof AuthenticatedRessourcesRoute
+  AuthenticatedReunionsRoute: typeof AuthenticatedReunionsRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedVoteRoute: typeof AuthenticatedVoteRoute
   AuthenticatedProfilIdRoute: typeof AuthenticatedProfilIdRoute
@@ -762,6 +802,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOrganigrammeRoute: AuthenticatedOrganigrammeRoute,
   AuthenticatedRapportsRoute: AuthenticatedRapportsRoute,
   AuthenticatedRessourcesRoute: AuthenticatedRessourcesRoute,
+  AuthenticatedReunionsRoute: AuthenticatedReunionsRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedVoteRoute: AuthenticatedVoteRoute,
   AuthenticatedProfilIdRoute: AuthenticatedProfilIdRoute,
@@ -780,6 +821,7 @@ const rootRouteChildren: RootRouteChildren = {
   MotDePasseOublieRoute: MotDePasseOublieRoute,
   VoteAccesRoute: VoteAccesRoute,
   CastingSoumissionTokenRoute: CastingSoumissionTokenRoute,
+  ReunionTokenRoute: ReunionTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
