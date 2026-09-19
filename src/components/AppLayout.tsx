@@ -131,6 +131,20 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
   if (org.isFunder && !me?.isAdmin)
     nav = [{ to: "/espace-bailleur", label: "Mon espace bailleur", Icon: Coins }];
 
+  // Six rubriques principales mises en avant en haut de l'écran.
+  const MAIN_ROUTES = [
+    "/dashboard",
+    "/idees",
+    "/taches",
+    "/rapports",
+    "/discussion",
+    "/reunions",
+  ];
+  const mainNav = MAIN_ROUTES.map((r) => nav.find((i) => i.to === r)).filter(
+    (i): i is NavItem => !!i,
+  );
+
+
   const ordered =
     order.length > 0
       ? [...nav].sort((a, b) => {
