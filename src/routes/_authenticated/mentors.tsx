@@ -21,6 +21,8 @@ type Invite = {
   code: string;
   used_at: string | null;
   created_at: string;
+  public_token: string | null;
+  status: string;
 };
 
 function randomCode() {
