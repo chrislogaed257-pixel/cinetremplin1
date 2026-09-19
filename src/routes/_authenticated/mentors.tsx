@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { MentorThread } from "@/components/MentorThread";
 
 export const Route = createFileRoute("/_authenticated/mentors")({
   component: MentorsPage,
@@ -142,25 +143,45 @@ function MentorsPage() {
           )}
           {(invites.data ?? []).map((i) => (
             <Card key={i.id}>
-              <CardContent className="flex flex-wrap items-center gap-3 p-4 text-sm">
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium">{i.full_name || i.email}</p>
-                  <p className="text-xs text-muted-foreground">{i.email}</p>
+              <CardContent className="space-y-3 p-4 text-sm">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium">{i.full_name || i.email}</p>
+                    <p className="text-xs text-muted-foreground">{i.email}</p>
+                  </div>
+                  <code className="rounded bg-secondary px-2 py-1 text-xs">{i.code}</code>
+                  <span className="text-xs text-muted-foreground">
+                    {i.used_at ? "Accès créé" : "En attente"}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      void navigator.clipboard.writeText(`${link} : code ${i.code}`);
+                      toast.success("Lien et code copiés");
+                    }}
+                  >
+                    Copier
+                  </Button>
+                  {i.public_token && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        void navigator.clipboard.writeText(`${openLink}?t=${i.public_token}`);
+                        toast.success("Lien personnel d'accès libre copié");
+                      }}
+                    >
+                      Copier son lien d'échange
+                    </Button>
+                  )}
                 </div>
-                <code className="rounded bg-secondary px-2 py-1 text-xs">{i.code}</code>
-                <span className="text-xs text-muted-foreground">
-                  {i.used_at ? "Accès créé" : "En attente"}
-                </span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => {
-                    void navigator.clipboard.writeText(`${link} — code : ${i.code}`);
-                    toast.success("Lien et code copiés");
-                  }}
-                >
-                  Copier
-                </Button>
+                <MentorThread
+                  inviteId={i.id}
+                  status={i.status ?? "active"}
+                  myId={org.myId}
+                  mentorName={i.full_name || i.email}
+                />
               </CardContent>
             </Card>
           ))}
