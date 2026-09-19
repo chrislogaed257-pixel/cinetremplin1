@@ -226,9 +226,9 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
             >
               <item.Icon className="h-4 w-4 shrink-0" />
               <span className="truncate">{t(item.label)}</span>
-              {item.to === "/messagerie" && unread.directTotal > 0 && (
+              {badgeFor(item.to) > 0 && (
                 <span className="ml-auto rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
-                  {unread.directTotal}
+                  {badgeFor(item.to)}
                 </span>
               )}
             </Link>
@@ -238,6 +238,28 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
 
       <div className="flex-1">
         <header className="border-b border-border">
+          <nav className="flex flex-wrap gap-1 border-b border-border px-4 py-2 print:hidden">
+            {mainNav.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={rememberScroll}
+                className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                  pathname === item.to
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+              >
+                <item.Icon className="h-4 w-4 shrink-0" />
+                <span>{t(item.label)}</span>
+                {badgeFor(item.to) > 0 && (
+                  <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                    {badgeFor(item.to)}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </nav>
           <div className="flex flex-wrap items-center gap-2 px-4 py-3 print:hidden">
             <p className="mr-auto text-xs text-muted-foreground">
               {me?.profile?.full_name}
