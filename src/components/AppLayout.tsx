@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/hooks/useProfile";
-import { useOrgContext, useUnread } from "@/hooks/useOrg";
+import { useNotifications, useOrgContext, useUnread } from "@/hooks/useOrg";
 import { PositionSwitcher } from "@/components/PositionSwitcher";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { PasswordGate } from "@/components/PasswordGate";
@@ -52,6 +52,7 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
   const { data: me } = useMe();
   const org = useOrgContext();
   const unread = useUnread(org.myId);
+  const { data: notifications = [] } = useNotifications(me?.userId);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -60,6 +61,19 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
   const navRef = useRef<HTMLElement | null>(null);
   const [order, setOrder] = useState<string[]>([]);
   const [dragged, setDragged] = useState<string | null>(null);
+
+  // Compte les nouveautés par rubrique à partir des notifications non lues.
+  const freshByRoute: Record<string, number> = {};
+  for (const n of notifications) {
+    if (n.read_at || !n.link) continue;
+    const base = `/${n.link.replace(/^\//, "").split(/[?#/]/)[0] ?? ""}`;
+    if (base.length > 1) freshByRoute[base] = (freshByRoute[base] ?? 0) + 1;
+  }
+  const badgeFor = (to: string) => {
+    if (to === "/messagerie") return unread.directTotal;
+    if (to === "/discussion") return Math.max(unread.total - unread.directTotal, 0);
+    return freshByRoute[to] ?? 0;
+  };
 
   useEffect(() => {
     try {
