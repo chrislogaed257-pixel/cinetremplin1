@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/hooks/useProfile";
-import { useOrgContext, useUnread } from "@/hooks/useOrg";
+import { useNotifications, useOrgContext, useUnread } from "@/hooks/useOrg";
 import { PositionSwitcher } from "@/components/PositionSwitcher";
 import { NotificationsBell } from "@/components/NotificationsBell";
 import { PasswordGate } from "@/components/PasswordGate";
@@ -52,6 +52,7 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
   const { data: me } = useMe();
   const org = useOrgContext();
   const unread = useUnread(org.myId);
+  const { data: notifications = [] } = useNotifications(me?.userId);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -60,6 +61,19 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
   const navRef = useRef<HTMLElement | null>(null);
   const [order, setOrder] = useState<string[]>([]);
   const [dragged, setDragged] = useState<string | null>(null);
+
+  // Compte les nouveautés par rubrique à partir des notifications non lues.
+  const freshByRoute: Record<string, number> = {};
+  for (const n of notifications) {
+    if (n.read_at || !n.link) continue;
+    const base = `/${n.link.replace(/^\//, "").split(/[?#/]/)[0] ?? ""}`;
+    if (base.length > 1) freshByRoute[base] = (freshByRoute[base] ?? 0) + 1;
+  }
+  const badgeFor = (to: string) => {
+    if (to === "/messagerie") return unread.directTotal;
+    if (to === "/discussion") return Math.max(unread.total - unread.directTotal, 0);
+    return freshByRoute[to] ?? 0;
+  };
 
   useEffect(() => {
     try {
@@ -116,6 +130,20 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
     nav = [{ to: "/mentor", label: "Espace mentor", Icon: GraduationCap }];
   if (org.isFunder && !me?.isAdmin)
     nav = [{ to: "/espace-bailleur", label: "Mon espace bailleur", Icon: Coins }];
+
+  // Six rubriques principales mises en avant en haut de l'écran.
+  const MAIN_ROUTES = [
+    "/dashboard",
+    "/idees",
+    "/taches",
+    "/rapports",
+    "/discussion",
+    "/reunions",
+  ];
+  const mainNav = MAIN_ROUTES.map((r) => nav.find((i) => i.to === r)).filter(
+    (i): i is NavItem => !!i,
+  );
+
 
   const ordered =
     order.length > 0
@@ -212,9 +240,9 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
             >
               <item.Icon className="h-4 w-4 shrink-0" />
               <span className="truncate">{t(item.label)}</span>
-              {item.to === "/messagerie" && unread.directTotal > 0 && (
+              {badgeFor(item.to) > 0 && (
                 <span className="ml-auto rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
-                  {unread.directTotal}
+                  {badgeFor(item.to)}
                 </span>
               )}
             </Link>
@@ -224,6 +252,28 @@ export function AppLayout({ children, title }: { children: ReactNode; title: str
 
       <div className="flex-1">
         <header className="border-b border-border">
+          <nav className="flex flex-wrap gap-1 border-b border-border px-4 py-2 print:hidden">
+            {mainNav.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={rememberScroll}
+                className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                  pathname === item.to
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+              >
+                <item.Icon className="h-4 w-4 shrink-0" />
+                <span>{t(item.label)}</span>
+                {badgeFor(item.to) > 0 && (
+                  <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                    {badgeFor(item.to)}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </nav>
           <div className="flex flex-wrap items-center gap-2 px-4 py-3 print:hidden">
             <p className="mr-auto text-xs text-muted-foreground">
               {me?.profile?.full_name}

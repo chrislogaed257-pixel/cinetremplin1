@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { mentorProjects } from "@/lib/mentors.functions";
+import { mentorProjects, mentorSendMessage, mentorThread } from "@/lib/mentors.functions";
 
 export const Route = createFileRoute("/mentor-espace")({
+  validateSearch: (search: Record<string, unknown>): { t?: string } =>
+    typeof search['t'] === "string" ? { t: search['t'] as string } : {},
   component: MentorOpenSpace,
   head: () => ({
     meta: [
@@ -31,8 +33,10 @@ export const Route = createFileRoute("/mentor-espace")({
 });
 
 type P = { id: string; title: string; description: string; status: string };
+type Msg = { id: string; from_mentor: boolean; content: string; created_at: string };
 
 function MentorOpenSpace() {
+  const { t: token } = Route.useSearch();
   const [projects, setProjects] = useState<P[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -40,6 +44,20 @@ function MentorOpenSpace() {
   const [content, setContent] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+
+  const [thread, setThread] = useState<{
+    invite: { id: string; full_name: string; status: string } | null;
+    inviter: { full_name: string; position: string } | null;
+    messages: Msg[];
+  } | null>(null);
+  const [chat, setChat] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const loadThread = useCallback(async () => {
+    if (!token) return;
+    const res = await mentorThread({ data: { token } });
+    setThread(res);
+  }, [token]);
 
   useEffect(() => {
     void (async () => {
@@ -49,11 +67,18 @@ function MentorOpenSpace() {
     })();
   }, []);
 
+  useEffect(() => {
+    void loadThread();
+    if (!token) return;
+    const id = setInterval(() => void loadThread(), 20000);
+    return () => clearInterval(id);
+  }, [loadThread, token]);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     const { error } = await supabase.from("mentor_feedback").insert({
-      mentor_name: name.trim() || "Mentor externe",
+      mentor_name: name.trim() || thread?.invite?.full_name || "Mentor externe",
       project_id: projectId || null,
       content: content.trim(),
     });
@@ -65,6 +90,28 @@ function MentorOpenSpace() {
     setDone(true);
   }
 
+  async function sendChat(e: React.FormEvent) {
+    e.preventDefault();
+    if (!token || chat.trim().length === 0) return;
+    setSending(true);
+    try {
+      await mentorSendMessage({ data: { token, content: chat.trim() } });
+      setChat("");
+      await loadThread();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Envoi impossible.");
+    }
+    setSending(false);
+  }
+
+  const invite = thread?.invite ?? null;
+  const statusLabel =
+    invite?.status === "paused"
+      ? "en pause"
+      : invite?.status === "closed"
+        ? "clôturée"
+        : "ouverte";
+
   return (
     <main className="mx-auto max-w-3xl space-y-4 px-4 py-8">
       <header className="space-y-1">
@@ -73,6 +120,62 @@ function MentorOpenSpace() {
           Accès libre : aucun compte, aucun identifiant, aucune adresse email n'est demandé.
         </p>
       </header>
+
+      {token && invite && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">
+              Échange avec {thread?.inviter?.full_name ?? "votre contact au club"}
+              {thread?.inviter?.position ? ` : ${thread.inviter.position}` : ""}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-xs text-muted-foreground">Discussion {statusLabel}.</p>
+            <div className="max-h-72 space-y-2 overflow-y-auto">
+              {(thread?.messages ?? []).length === 0 && (
+                <p className="text-sm text-muted-foreground">Aucun message pour le moment.</p>
+              )}
+              {(thread?.messages ?? []).map((m) => (
+                <div
+                  key={m.id}
+                  className={`rounded px-3 py-2 text-sm ${
+                    m.from_mentor ? "bg-primary/10" : "bg-secondary"
+                  }`}
+                >
+                  <p className="text-xs text-muted-foreground">
+                    {m.from_mentor ? "Vous" : thread?.inviter?.full_name || "Le club"} :{" "}
+                    {new Date(m.created_at).toLocaleString("fr-FR")}
+                  </p>
+                  <p className="whitespace-pre-wrap">{m.content}</p>
+                </div>
+              ))}
+            </div>
+            {invite.status === "active" ? (
+              <form className="space-y-2" onSubmit={sendChat}>
+                <Textarea
+                  rows={3}
+                  value={chat}
+                  onChange={(e) => setChat(e.target.value)}
+                  placeholder="Votre message"
+                />
+                <Button type="submit" size="sm" disabled={sending || chat.trim().length === 0}>
+                  Envoyer
+                </Button>
+              </form>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                La discussion est {statusLabel} par le club : vous ne pouvez plus écrire.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {token && thread && !invite && (
+        <p className="text-sm text-muted-foreground">
+          Ce lien d'échange n'est plus valable, mais vous pouvez laisser votre retour ci-dessous.
+        </p>
+      )}
 
       {loading && <p className="text-sm text-muted-foreground">Chargement des projets...</p>}
 
